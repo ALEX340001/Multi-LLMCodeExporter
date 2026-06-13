@@ -19,3 +19,18 @@ Logs/
 # IDE
 .idea/
 .vscode/
+
+# Local build artifacts
+compiling_linuxx64/
+*.pdb
+*.deps.json
+createdump
+
+# Local scripts
+compile_run.sh
+run-exporter.sh
+*.sh
+
+# Symlinks
+*ссылка*
+*.lnk
