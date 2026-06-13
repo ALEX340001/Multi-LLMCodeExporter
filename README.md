@@ -26,12 +26,12 @@ git clone https://github.com/ALEX340001/Multi-LLMCodeExporter.git
 cd Multi-LLMCodeExporter
 dotnet build
 Интерактивный режим
-bash
+
 dotnet run --project src/LLMCodeExporter.CLI
 Приложение предложит выбрать тип проекта, режим экспорта, фильтры и формат вывода.
 
 CLI режим (без интерактивного меню)
-bash
+
 dotnet run --project src/LLMCodeExporter.CLI -- /путь/к/проекту [опции]
 Основные опции
 Опция	Описание
