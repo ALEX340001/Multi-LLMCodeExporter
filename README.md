@@ -98,13 +98,3 @@ dotnet run --project src/LLMCodeExporter.CLI -- ~/MyProject --exclude=*.Designer
 Сообщения об ошибках и предложения принимаются через Issues. Pull Requests приветствуются.
 
 ---
-
-### Инструкция по сохранению
-
-Сохраните этот текст в файл `README.md`, затем выполните в терминале:
-
-```bash
-git add README.md
-git commit -m "Добавлен README с описанием и инструкцией"
-git push origin main
-```
