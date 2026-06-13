@@ -1,0 +1,21 @@
+# Binaries
+bin/
+obj/
+publish/
+*.dll
+*.exe
+*.so
+*.dylib
+
+# User-specific files
+*.user
+*.suo
+.vs/
+
+# Logs and exports
+Exports/
+Logs/
+
+# IDE
+.idea/
+.vscode/
