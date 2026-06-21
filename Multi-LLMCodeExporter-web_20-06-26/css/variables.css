@@ -1,0 +1,49 @@
+:root {
+    --bg-page: #FFF4C7;
+    --text-primary: #1e293b;
+    --text-secondary: #334155;
+    --card-bg: #FFFDF7;
+    --card-border: #e2e8f0;
+    --navbar-bg: #ffffff;
+    --navbar-border: #000000;
+    --button-bg: #333333;
+    --button-text: #ffffff;
+    --button-border: #ffffff;
+    --dropdown-bg: #ffffff;
+    --dropdown-text: #333333;
+    --dropdown-border: #cccccc;
+    --dropdown-shadow: rgba(0, 0, 0, 0.15);
+    --goals-bg: #1e293b;
+    --goals-text: #e2e8f0;
+    --toggle-btn-bg: #333;
+    --toggle-btn-text: white;
+    --toggle-btn-border: white;
+    --link-color: #2563eb;
+    --link-hover: #1d4ed8;
+    --accent-color: #38bdf8;
+}
+
+body.dark {
+    --bg-page: #0a0f1f;
+    --text-primary: #e2e8f0;
+    --text-secondary: #cbd5e1;
+    --card-bg: #1e293b;
+    --card-border: #334155;
+    --navbar-bg: #0f172a;
+    --navbar-border: #475569;
+    --button-bg: #e2e8f0;
+    --button-text: #0f172a;
+    --button-border: #94a3b8;
+    --dropdown-bg: #1e293b;
+    --dropdown-text: #e2e8f0;
+    --dropdown-border: #475569;
+    --dropdown-shadow: rgba(0, 0, 0, 0.4);
+    --goals-bg: #0a0f1f;
+    --goals-text: #f1f5f9;
+    --toggle-btn-bg: #e2e8f0;
+    --toggle-btn-text: #0f172a;
+    --toggle-btn-border: #94a3b8;
+    --link-color: #60a5fa;
+    --link-hover: #93c5fd;
+    --accent-color: #38bdf8;
+}

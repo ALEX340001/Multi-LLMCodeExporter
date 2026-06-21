@@ -1,0 +1,10 @@
+/* Часы-арт */
+.clock-canvas {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.3;
+    transition: opacity 0.5s;
+}
+body.dark .clock-canvas {
+    display: none; /* скрываем в тёмной теме */
+}
