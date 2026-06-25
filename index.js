@@ -27,7 +27,7 @@ function loadNav() {
                 navWrapper.innerHTML = html;
                 console.log('✅ Навигация загружена');
                 initThemeAndStars();
-                initLanguageSwitcher();     // обработчики языков
+                initLanguageSwitcher();
             } else {
                 console.error('❌ Контейнер .nav-wrapper не найден');
             }
@@ -50,7 +50,7 @@ function loadFooter() {
         .catch(error => console.error('Ошибка загрузки футера:', error));
 }
 
-// ===== Обработчик смены языка (делегирование) =====
+// ===== Обработчик кликов по языкам =====
 function initLanguageSwitcher() {
     document.body.addEventListener('click', function (e) {
         const link = e.target.closest('a[data-lang]');
@@ -61,10 +61,9 @@ function initLanguageSwitcher() {
     });
 }
 
-// ===== Переключение языка (куки) =====
+// ===== Переключение языка (куки + перезагрузка) =====
 window.switchLang = function (lang) {
     if (lang === 'ru') {
-        // Удаляем куку – возврат к русскому
         document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC';
     } else {
         document.cookie = `googtrans=/ru/${lang}; path=/;`;
@@ -76,19 +75,72 @@ window.switchLang = function (lang) {
 const supportedLangs = ['en', 'es', 'fr', 'de', 'it', 'pt', 'zh-CN', 'ja', 'ko', 'ar', 'tr', 'pl'];
 
 function autoDetectLanguage() {
-    // Если кука уже есть – не переопределяем
     if (document.cookie.includes('googtrans=')) return;
-
     const userLang = navigator.language || navigator.userLanguage;
     const langCode = userLang.split('-')[0];
-
     if (langCode === 'ru') return;
-
     if (supportedLangs.includes(langCode) || supportedLangs.includes(userLang)) {
         const targetLang = supportedLangs.includes(userLang) ? userLang : langCode;
         document.cookie = `googtrans=/ru/${targetLang}; path=/;`;
         location.reload();
     }
+}
+
+// ===== Инициализация Google Translate (только виджет, без поиска select) =====
+function initGoogleTranslate() {
+    // Не запускаем на локальных file:// или обычном HTTP (кроме localhost)
+    if (window.location.protocol === 'file:' ||
+        (window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')) {
+        console.warn('⚠️ Google Translate не поддерживается в этом окружении.');
+        return;
+    }
+
+    // Создаём скрытый контейнер
+    const container = document.createElement('div');
+    container.id = 'google_translate_element';
+    container.style.display = 'none';
+    document.body.appendChild(container);
+
+    window.googleTranslateInit = function () {
+        if (window.google && google.translate) {
+            new google.translate.TranslateElement({
+                pageLanguage: 'ru',
+                includedLanguages: supportedLangs.join(','),
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+            console.log('✅ Google Translate виджет инициализирован');
+            hideGoogleBranding();
+        } else {
+            console.warn('⚠️ Google API ещё не готов, повтор через 2 с');
+            setTimeout(initGoogleTranslate, 2000);
+        }
+    };
+
+    const script = document.createElement('script');
+    script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateInit';
+    script.async = true;
+    script.onerror = () => console.error('❌ Не удалось загрузить скрипт Google Translate');
+    document.head.appendChild(script);
+}
+
+function hideGoogleBranding() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame, iframe[id*="goog-te-banner"],
+        #goog-gt-tt, .goog-tooltip, .goog-tooltip:hover, .goog-te-balloon-frame, iframe.goog-te-balloon-frame,
+        .goog-te-gadget, .goog-te-gadget-simple, #google_translate_element, .goog-te-menu-frame,
+        iframe.goog-te-menu-frame, .goog-te-combo, select.goog-te-combo, .goog-te-menu-value, .goog-te-menu-value span,
+        iframe[src*="translate.google.com"], iframe[src*="translate.googleapis.com"] {
+            display: none !important;
+        }
+        body { top: 0 !important; position: static !important; }
+    `;
+    document.head.appendChild(style);
+
+    // Физически удаляем контейнер виджета
+    const el = document.getElementById('google_translate_element');
+    if (el) el.remove();
 }
 
 // ===== Тема и звёзды =====
@@ -297,12 +349,12 @@ function initClocks() {
     createClocks();
 }
 
-// ===== Единый запуск после загрузки страницы =====
+// ===== Запуск всего =====
 document.addEventListener('DOMContentLoaded', () => {
     loadNav().then(() => {
         loadFooter();
         initClocks();
-        autoDetectLanguage();   // авто-перевод, если нужно
-        // initGoogleTranslate() больше нет – перевод работает через куки
+        autoDetectLanguage();  // автоопределение перед виджетом
+        initGoogleTranslate(); // загружаем виджет (невидимый)
     });
 });
