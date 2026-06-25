@@ -100,6 +100,33 @@ function initThemeAndStars() {
     });
 }
 
+// ===== Автоопределение языка =====
+const supportedLangs = ['en', 'es', 'fr', 'de', 'it', 'pt', 'zh-CN', 'ja', 'ko', 'ar', 'tr', 'pl'];
+
+function autoDetectLanguage() {
+    // Если кука перевода уже установлена, ничего не делаем
+    if (document.cookie.includes('googtrans=')) return;
+
+    // Если в этой сессии уже пытались автоопределиться – пропускаем
+    if (sessionStorage.getItem('autoLangDetected')) return;
+    sessionStorage.setItem('autoLangDetected', '1');
+
+    const userLang = navigator.language || navigator.userLanguage;
+    const langCode = userLang.split('-')[0];
+
+    // Русский не переводим
+    if (langCode === 'ru') return;
+
+    // Ищем точное совпадение (например "zh-CN") или основной код ("en")
+    const targetLang = supportedLangs.includes(userLang) ? userLang : 
+                       supportedLangs.includes(langCode) ? langCode : null;
+
+    if (targetLang) {
+        document.cookie = `googtrans=/ru/${targetLang}; path=/;`;
+        location.reload();
+    }
+}
+
 // ===== Звёздный фон =====
 let starCanvas = null;
 let starCtx = null;
@@ -283,6 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadNav().then(() => {
         loadFooter();
         initClocks();
-        // перевод работает через куки, виджет не нужен
+        autoDetectLanguage(); 
+        
     });
 });
