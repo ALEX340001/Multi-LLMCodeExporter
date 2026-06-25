@@ -1,4 +1,4 @@
-// ===== Базовый путь (для загрузки nav/footer) =====
+// ===== Базовый путь =====
 function getBasePath() {
     const path = window.location.pathname;
     if (
@@ -51,18 +51,78 @@ function loadFooter() {
 }
 
 // ===== Обработчик смены языка (делегирование) =====
-initLanguageSwitcher
+function initLanguageSwitcher() {
+    document.body.addEventListener('click', function (e) {
+        const link = e.target.closest('a[data-lang]');
+        if (!link) return;
+        e.preventDefault();
+        const lang = link.getAttribute('data-lang');
+        if (lang) window.switchLang(lang);
+    });
+}
 
 // ===== Переключение языка (куки + перезагрузка) =====
 window.switchLang = function (lang) {
     if (lang === 'ru') {
-        // Сброс перевода – удаляем куку
         document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC';
     } else {
         document.cookie = `googtrans=/ru/${lang}; path=/;`;
     }
     window.location.reload();
 };
+
+// ===== Google Translate (скрытый виджет) =====
+function initGoogleTranslate() {
+    if (window.location.protocol === 'file:' ||
+        (window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')) {
+        console.warn('⚠️ Google Translate не поддерживается в этом окружении.');
+        return;
+    }
+
+    const container = document.createElement('div');
+    container.id = 'google_translate_element';
+    container.style.display = 'none';
+    document.body.appendChild(container);
+
+    window.googleTranslateInit = function () {
+        if (window.google && google.translate) {
+            new google.translate.TranslateElement({
+                pageLanguage: 'ru',
+                includedLanguages: 'en,es,fr,de,it,pt,zh-CN,ja,ko,ar,tr,pl',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+            console.log('✅ Google Translate виджет инициализирован (скрыт)');
+            hideGoogleBranding();
+        } else {
+            console.warn('⚠️ Google API ещё не готов, повтор через 2 с');
+            setTimeout(initGoogleTranslate, 2000);
+        }
+    };
+
+    const script = document.createElement('script');
+    script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateInit';
+    script.async = true;
+    script.onerror = () => console.error('❌ Не удалось загрузить скрипт Google Translate');
+    document.head.appendChild(script);
+}
+
+function hideGoogleBranding() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .goog-te-banner-frame, iframe.goog-te-banner-frame, iframe[id*="goog-te-banner"],
+        #goog-gt-tt, .goog-tooltip, .goog-tooltip:hover, .goog-te-balloon-frame, iframe.goog-te-balloon-frame,
+        .goog-te-gadget, .goog-te-gadget-simple, #google_translate_element, .goog-te-menu-frame,
+        iframe.goog-te-menu-frame, .goog-te-combo, select.goog-te-combo, .goog-te-menu-value, .goog-te-menu-value span,
+        iframe[src*="translate.google.com"], iframe[src*="translate.googleapis.com"] {
+            display: none !important;
+        }
+        body { top: 0 !important; position: static !important; }
+    `;
+    document.head.appendChild(style);
+    const el = document.getElementById('google_translate_element');
+    if (el) el.remove();
+}
 
 // ===== Тема и звёзды =====
 function initThemeAndStars() {
@@ -90,33 +150,6 @@ function initThemeAndStars() {
         toggleBtn.textContent = nowDark ? '☀️' : '🌙';
         nowDark ? initStars() : removeStars();
     });
-}
-
-// ===== Автоопределение языка =====
-const supportedLangs = ['en', 'es', 'fr', 'de', 'it', 'pt', 'zh-CN', 'ja', 'ko', 'ar', 'tr', 'pl'];
-
-function autoDetectLanguage() {
-    // Если кука перевода уже установлена, ничего не делаем
-    if (document.cookie.includes('googtrans=')) return;
-
-    // Если в этой сессии уже пытались автоопределиться – пропускаем
-    if (sessionStorage.getItem('autoLangDetected')) return;
-    sessionStorage.setItem('autoLangDetected', '1');
-
-    const userLang = navigator.language || navigator.userLanguage;
-    const langCode = userLang.split('-')[0];
-
-    // Русский не переводим
-    if (langCode === 'ru') return;
-
-    // Ищем точное совпадение (например "zh-CN") или основной код ("en")
-    const targetLang = supportedLangs.includes(userLang) ? userLang : 
-                       supportedLangs.includes(langCode) ? langCode : null;
-
-    if (targetLang) {
-        document.cookie = `googtrans=/ru/${targetLang}; path=/;`;
-        location.reload();
-    }
 }
 
 // ===== Звёздный фон =====
@@ -166,7 +199,7 @@ function removeStars() {
     }
 }
 
-// ===== Часы (дискретные тики) =====
+// ===== Часы =====
 let clockInterval = null;
 let clocks = [];
 let prevSecond = -1;
@@ -297,14 +330,11 @@ function initClocks() {
     createClocks();
 }
 
-// ===== Запуск всего (без виджета Google Translate) =====
+// ===== Запуск =====
 document.addEventListener('DOMContentLoaded', () => {
     loadNav().then(() => {
         loadFooter();
         initClocks();
-        autoDetectLanguage(); 
-        document.body.addEventListener('click', function(e) {
-    console.log('Клик на элементе:', e.target, 'Ближайший data-lang:', e.target.closest('a[data-lang]'));
-});
+        initGoogleTranslate();   // виджет загружается, но скрыт
     });
 });
