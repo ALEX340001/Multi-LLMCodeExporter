@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Режимы экспорта — Multi‑LLMCodeExporter</title>
+    <meta name="description" content="Сравнение трёх режимов экспорта: Compact, Balanced, Full. Когда и какой выбирать.">
+
+      <link rel="stylesheet" href="../css/variables.css">   
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/navigation.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="../css/clock.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/install.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+    <div id="google_translate_element" style="display:none;"></div>
+    <div class="nav-wrapper"></div>
+    <main>
+        <div id="clocks-container" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></div>
+
+        <div class="container">
+            <div class="page-content">
+                <h1 class="page-title">Режимы экспорта</h1>
+
+                <!-- Введение -->
+                <div class="inline-card" style="margin-bottom: 2rem;">
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
+                        Программа предлагает <span class="underline"><strong>три режима экспорта</strong></span>, которые отличаются степенью детализации и итоговым размером выходного файла.
+                        Выбор режима зависит от размера вашего проекта, доступного контекстного окна LLM и ваших целей.
+                    </p>
+                </div>
+
+                <!-- 1. Сравнение режимов (таблица) -->
+                <div class="project-card">
+                    <h2>1. Сравнение режимов</h2>
+                    <table class="compare-table">
+                        <thead>
+                            <tr>
+                                <th>Режим</th>
+                                <th>Размер (от оригинала)</th>
+                                <th>Что включается</th>
+                                <th>Рекомендуемый контекст</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Compact</strong></td>
+                                <td>~30%</td>
+                                <td>Структура проекта + сигнатуры методов (без тела)</td>
+                                <td>До 32K токенов</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Balanced</strong></td>
+                                <td>~50‑70%</td>
+                                <td>Весь код, но длинные методы сворачиваются (тело заменяется на <code>// ...</code>)</td>
+                                <td>До 128K токенов</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Full</strong></td>
+                                <td>100%</td>
+                                <td>Весь исходный код без изменений</td>
+                                <td>200K+ токенов</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-top: 0.8rem;">
+                        <span class="underline"><strong>Оценка размера:</strong></span> При запуске программа показывает примерное количество токенов в проекте и даёт рекомендации по выбору режима.
+                    </p>
+                </div>
+
+                <!-- 2. Когда какой режим выбирать -->
+                <div class="project-card">
+                    <h2>2. Когда какой режим выбирать</h2>
+
+                    <div class="class-card">
+                        <h3>2.1 Compact – для быстрого обзора</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
+                            Идеален, когда нужно быстро понять структуру проекта, узнать, какие классы и методы существуют, не вдаваясь в детали реализации. Подходит для небольших LLM с ограниченным контекстом (до 8K токенов).
+                        </p>
+                    </div>
+
+                    <div class="class-card">
+                        <h3>2.2 Balanced – оптимальный выбор</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
+                            Рекомендуется для большинства проектов. Вы получаете полный код, но слишком длинные методы (более <strong>50 строк</strong> по умолчанию) сворачиваются, чтобы сэкономить место.
+                            Вы можете изменить порог с помощью ключа <code>--collapse-threshold</code>. Этот режим даёт наилучшее соотношение «содержательность / размер» для большинства современных LLM (GPT‑4 Turbo, Claude 3.5, Gemini 1.5 Pro).
+                        </p>
+                    </div>
+
+                    <div class="class-card">
+                        <h3>2.3 Full – полный контроль</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
+                            Используйте, если вам критически важен каждый символ кода, например, для отладки, рефакторинга или детального анализа. Подходит только для очень больших контекстных окон (200K+ токенов) или для небольших проектов.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 3. Советы по экономии токенов -->
+                <div class="project-card">
+                    <h2>3. Советы по экономии токенов</h2>
+                    <ul style="color: var(--text-secondary); line-height: 1.8; margin: 0; padding-left: 1.5rem;">
+                        <li>Используйте фильтры (<code>--exclude</code>) для удаления тестов, UI‑файлов или автоматически сгенерированного кода.</li>
+                        <li>Применяйте preset <code>--backend-only</code>, если вам нужна только серверная логика.</li>
+                        <li>В режиме <code>Compact</code> дополнительно можно удалить комментарии (<code>--no-comments</code>) и пустые строки.</li>
+                    </ul>
+                </div>
+
+                <!-- 4. Следующие шаги -->
+                <div class="project-card">
+                    <h2>4. Следующие шаги</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">
+                        Подробнее о фильтрах и ключах читайте на странице <a href="./cli.html">CLI‑ключи и фильтры</a>.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <script src="../index.js"></script>
+</body>
+</html>

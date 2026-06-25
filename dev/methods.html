@@ -1,0 +1,381 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Логика методов — Multi‑LLMCodeExporter</title>
+    <meta name="description" content="Пошаговое описание ключевых методов: что делают, что ожидают, что возвращают.">
+
+
+
+<link rel="stylesheet" href="../css/variables.css">   
+<link rel="stylesheet" href="../css/reset.css">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/layout.css">
+<link rel="stylesheet" href="../css/navigation.css">
+<link rel="stylesheet" href="../css/components.css">
+<link rel="stylesheet" href="../css/utilities.css">
+<link rel="stylesheet" href="../css/clock.css">
+<link rel="stylesheet" href="../css/home.css">
+<link rel="stylesheet" href="../css/dev.css">   
+
+
+
+     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+
+
+
+
+</head>
+<body>
+    <div id="google_translate_element" style="display:none;"></div>
+    <div class="nav-wrapper"></div>
+    <main>
+        <div id="clocks-container" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></div>
+
+        <div class="container">
+            <div class="page-content">
+
+                <h1 class="page-title">Логика ключевых методов</h1>
+
+                <!-- Введение -->
+                <div class="inline-card" style="margin-bottom: 2rem;">
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
+                        На этой странице мы разбираем, как работают основные методы программы: что они делают, какие данные принимают, какие возвращают и какой алгоритм выполняют. Методы сгруппированы по проектам (<strong>CLI</strong>, <strong>Infrastructure</strong>). В <strong>Core</strong> методов нет – только модели и интерфейсы.
+                    </p>
+                </div>
+
+                <!-- ========================================================= -->
+                <!-- 1. LLMCodeExporter.CLI -->
+                <!-- ========================================================= -->
+                <div class="project-card">
+                    <h2>1. LLMCodeExporter.CLI</h2>
+
+                    <!-- 1.1 Program.Main -->
+                    <div class="class-card">
+                        <h3>1.1 Program.Main</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Сигнатура:</strong></span> <code>static void Main(string[] args)</code>
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Назначение:</strong></span> Точка входа. Определяет режим работы (интерактивный или CLI), инициализирует сервисы и запускает экспорт.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Пошаговый алгоритм:</strong></span>
+                        </p>
+                        <ol style="margin-left: 1.5rem;">
+                            <li>Устанавливает кодировку консоли в <code>UTF-8</code>.</li>
+                            <li>Вызывает <code>ParseArguments(args)</code> для разбора аргументов. Если <code>showHelp</code> == <code>true</code> – вызывает <code>ShowHelp()</code> и завершает работу.</li>
+                            <li>Если <code>hasCliArgs</code> == <code>false</code> (интерактивный режим):
+                                <ul>
+                                    <li>Выводит заголовок приложения.</li>
+                                    <li>Запрашивает путь к проекту через <code>InputHelper.ReadDirectoryPath</code>.</li>
+                                    <li>Если путь не указан – предлагает использовать текущую директорию.</li>
+                                </ul>
+                            </li>
+                            <li>Нормализует путь через <code>NormalizeProjectPath</code>.</li>
+                            <li>Создаёт экземпляры сервисов: <code>FileScanner</code>, <code>CodeProcessor</code>, <code>ExportService</code>.</li>
+                            <li>В интерактивном режиме:
+                                <ul>
+                                    <li>Выполняет предварительное сканирование для получения статистики (с временными настройками).</li>
+                                    <li>Показывает статистику через <code>InteractiveMenu.ShowProjectStats</code>.</li>
+                                    <li>Вызывает <code>InteractiveMenu.ConfigureSettings</code> для получения финальных настроек.</li>
+                                    <li>Повторно сканирует проект с финальными настройками.</li>
+                                </ul>
+                            </li>
+                            <li>В CLI-режиме: использует настройки из аргументов (если они были переданы).</li>
+                            <li>Вызывает <code>ExportService.ExportProject(projectInfo, settings)</code>.</li>
+                            <li>Показывает результат через <code>InteractiveMenu.ShowExportResult</code>.</li>
+                            <li>В интерактивном режиме ожидает нажатия клавиши перед выходом.</li>
+                        </ol>
+                    </div>
+
+                    <!-- 1.2 Program.ParseArguments -->
+                    <div class="class-card">
+                        <h3>1.2 Program.ParseArguments</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Сигнатура:</strong></span> <code>static (ExportSettings settings, string projectPath, bool showHelp, bool hasCliArgs) ParseArguments(string[] args)</code>
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Назначение:</strong></span> Разбирает аргументы командной строки и формирует объект <code>ExportSettings</code>.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Алгоритм:</strong></span>
+                        </p>
+                        <ol style="margin-left: 1.5rem;">
+                            <li>Инициализирует <code>settings</code> как <code>null</code>, <code>projectPath</code> как <code>null</code>.</li>
+                            <li>Проходит по массиву <code>args</code>:
+                                <ul>
+                                    <li>Если аргумент <code>--help</code>, <code>-h</code> или <code>/?</code> – устанавливает флаг <code>showHelp = true</code>.</li>
+                                    <li>Если аргумент не начинается с <code>--</code> и <code>projectPath</code> ещё не установлен – сохраняет его как путь (убирая кавычки).</li>
+                                    <li>Если аргумент начинается с <code>--mode=</code> – устанавливает <code>settings.Mode</code>.</li>
+                                    <li>Если <code>--format=</code> – устанавливает <code>settings.Format</code>.</li>
+                                    <li>Если <code>--exclude=</code> – добавляет паттерн в <code>settings.ExcludePatterns</code>.</li>
+                                    <li>Если <code>--include=</code> – добавляет паттерн в <code>settings.IncludeOnlyPatterns</code>.</li>
+                                    <li>Обрабатывает preset’ы: <code>--backend-only</code>, <code>--domain-services</code>, <code>--compact-aggressive</code>, <code>--web-app</code>.</li>
+                                    <li>Обрабатывает флаги: <code>--no-comments</code>, <code>--keep-empty-lines</code>, <code>--no-consolidate-usings</code>.</li>
+                                    <li>Обрабатывает <code>--collapse-threshold</code> и <code>--output=</code>.</li>
+                                </ul>
+                            </li>
+                            <li>Возвращает кортеж: <code>(settings, projectPath, showHelp, hasCliArgs)</code>.</li>
+                        </ol>
+                    </div>
+
+                    <!-- 1.3 InteractiveMenu.ConfigureSettings -->
+                    <div class="class-card">
+                        <h3>1.3 InteractiveMenu.ConfigureSettings</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Сигнатура:</strong></span> <code>static ExportSettings ConfigureSettings(ProjectInfo projectInfo)</code>
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Назначение:</strong></span> Проводит интерактивный опрос пользователя и возвращает заполненный <code>ExportSettings</code>.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Алгоритм:</strong></span>
+                        </p>
+                        <ol style="margin-left: 1.5rem;">
+                            <li>Создаёт новый экземпляр <code>ExportSettings</code>.</li>
+                            <li>Запрашивает тип проекта (1 – C#, 2 – Python, 3 – WebApp) через <code>InputHelper.ReadChoice</code> и устанавливает соответствующие расширения и presets.</li>
+                            <li>Запрашивает режим экспорта (1 – Compact, 2 – Balanced, 3 – Full) и устанавливает <code>settings.Mode</code>.</li>
+                            <li>Запрашивает предустановку фильтров (1 – Без фильтров, 2 – Backend Only, 3 – Domain+Services, 4 – Максимальное сжатие). Применяет соответствующий preset.</li>
+                            <li>Если выбран «Без фильтров», спрашивает, нужно ли добавить кастомные фильтры; если да – вызывает <code>ConfigureCustomFilters</code>.</li>
+                            <li>Запрашивает формат экспорта (Markdown или Plain Text).</li>
+                            <li>Если режим не Full, спрашивает об удалении пустых строк и комментариев (если не выбран агрессивный preset).</li>
+                            <li>Показывает итоговую конфигурацию и спрашивает подтверждение. Если пользователь подтверждает – возвращает <code>settings</code>, иначе – <code>null</code>.</li>
+                        </ol>
+                    </div>
+
+                    <!-- 1.4 InputHelper.ReadLine -->
+                    <div class="class-card">
+                        <h3>1.4 InputHelper.ReadLine</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Сигнатура:</strong></span> <code>static string ReadLine(string message, int maxAttempts = 3, bool allowEmpty = false)</code>
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Назначение:</strong></span> Безопасное чтение строки с повторными попытками при пустом вводе.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Алгоритм:</strong></span>
+                        </p>
+                        <ol style="margin-left: 1.5rem;">
+                            <li>Выводит <code>message</code> в консоль.</li>
+                            <li>В цикле (до <code>maxAttempts</code>) читает строку через <code>Console.ReadLine()</code>.</li>
+                            <li>Если строка пустая и <code>allowEmpty == false</code> – выводит предупреждение и повторяет запрос.</li>
+                            <li>Если строка корректна – возвращает её (с обрезанием пробелов).</li>
+                            <li>Если попытки исчерпаны – возвращает <code>null</code> (или пустую строку, если <code>allowEmpty == true</code>).</li>
+                        </ol>
+                    </div>
+
+                    <!-- 1.5 Остальные методы InputHelper -->
+                    <div class="class-card">
+                        <h3>1.5 Остальные методы InputHelper</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Краткое описание:</strong></span>
+                        </p>
+                        <ul class="method-list">
+                            <li><code>ReadDirectoryPath</code> – аналогичен <code>ReadLine</code>, но дополнительно проверяет существование и доступность папки.</li>
+                            <li><code>ReadYesNo</code> – читает ответ <code>y</code>/<code>n</code> (или Enter для значения по умолчанию), возвращает <code>bool</code>.</li>
+                            <li><code>ReadChoice</code> – читает целое число в заданном диапазоне, возвращает выбранное значение.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- ========================================================= -->
+                <!-- 2. LLMCodeExporter.Infrastructure -->
+                <!-- ========================================================= -->
+                <div class="project-card">
+                    <h2>2. LLMCodeExporter.Infrastructure</h2>
+
+                    <!-- 2.1 ExportService.ExportProject -->
+                    <div class="class-card">
+                        <h3>2.1 ExportService.ExportProject</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Сигнатура:</strong></span> <code>ExportResult ExportProject(ProjectInfo projectInfo, ExportSettings settings)</code>
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Назначение:</strong></span> Основной метод, выполняющий весь процесс экспорта: оптимизация, форматирование, запись.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Пошаговый алгоритм:</strong></span>
+                        </p>
+                        <ol style="margin-left: 1.5rem;">
+                            <li>Создаёт экземпляр <code>CodeOptimizer</code>.</li>
+                            <li>Создаёт <code>IOutputFormatter</code> (Markdown или PlainText) в зависимости от <code>settings.Format</code>.</li>
+                            <li>Формирует имя выходного файла: <code>code_export_Проект_Режим_дата.расширение</code>.</li>
+                            <li>Открывает поток для записи в выходной файл.</li>
+                            <li>Записывает заголовок через <code>formatter.FormatHeader(projectInfo)</code>.</li>
+                            <li>Для каждого файла из <code>projectInfo.Files</code>:
+                                <ul>
+                                    <li>Читает содержимое файла через <code>ReadFileContentAsync</code>.</li>
+                                    <li>Если режим не Full – вызывает <code>codeOptimizer.OptimizeContent(content, file.RelativePath)</code>.</li>
+                                    <li>Вызывает <code>codeProcessor.ProcessCode(optimizedContent, settings)</code>.</li>
+                                    <li>Получает тег файла через <code>codeOptimizer.GetFileTag</code> (например, <code>[test]</code> или <code>[auto-generated]</code>).</li>
+                                    <li>Записывает отформатированный файл через <code>formatter.FormatFile(file, processedContent, tag)</code>.</li>
+                                    <li>Логирует прогресс через <code>Logger.Log</code>.</li>
+                                </ul>
+                            </li>
+                            <li>Записывает футер через <code>formatter.FormatFooter(projectInfo)</code>.</li>
+                            <li>Обновляет метаданные: <code>OptimizedSize</code>, <code>EstimatedTokens</code>, <code>RecommendedContextWindow</code>.</li>
+                            <li>Возвращает <code>ExportResult</code> с флагом успеха, путём к файлу и сообщением.</li>
+                        </ol>
+                    </div>
+
+                    <!-- 2.2 CodeOptimizer.OptimizeContent -->
+                    <div class="class-card">
+                        <h3>2.2 CodeOptimizer.OptimizeContent</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Сигнатура:</strong></span> <code>string OptimizeContent(string content, string filePath)</code>
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Назначение:</strong></span> Применяет оптимизацию в зависимости от режима <code>settings.Mode</code>.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Алгоритм:</strong></span>
+                        </p>
+                        <ul class="method-list">
+                            <li>Если <code>Mode == Full</code> – возвращает исходное содержимое без изменений.</li>
+                            <li>Если <code>Mode == Compact</code>:
+                                <ul>
+                                    <li>Вызывает <code>ExtractSignatures</code> – разбивает код на строки, находит объявления классов/интерфейсов, извлекает только сигнатуры методов и свойств, группирует их с помощью <code>MethodGrouper</code> и выводит компактно.</li>
+                                    <li>Если <code>settings.ConsolidateUsings</code> == <code>true</code> – собирает все <code>using</code> в начале.</li>
+                                </ul>
+                            </li>
+                            <li>Если <code>Mode == Balanced</code>:
+                                <ul>
+                                    <li>Вызывает <code>CollapseLongMethods</code> – анализирует строки, находит методы, считает количество строк в теле. Если метод превышает <code>settings.MethodCollapseThreshold</code> – заменяет тело на <code>// ...</code>, оставляя только сигнатуру и первые 3 строки для контекста.</li>
+                                </ul>
+                            </li>
+                            <li>Возвращает полученную строку.</li>
+                        </ul>
+                        <div style="margin-top: 0.8rem;">
+                            <strong>Подметоды:</strong>
+                            <ul class="method-list">
+                                <li><code>ExtractSignatures</code> – сканирует строки, отслеживает вложенность фигурных скобок, запоминает сигнатуры методов и полей. В конце выводит структуру класса со сгруппированными методами.</li>
+                                <li><code>CollapseLongMethods</code> – аналогично отслеживает начало и конец метода по скобкам; если количество строк в теле больше порога – заменяет тело, иначе оставляет как есть.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 2.3 FileScanner.ScanProject -->
+                    <div class="class-card">
+                        <h3>2.3 FileScanner.ScanProject</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Сигнатура:</strong></span> <code>ProjectInfo ScanProject(string projectPath, ExportSettings settings)</code>
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Назначение:</strong></span> Сканирует файловую систему и возвращает <code>ProjectInfo</code> с отфильтрованными файлами.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Алгоритм:</strong></span>
+                        </p>
+                        <ol style="margin-left: 1.5rem;">
+                            <li>Проверяет существование папки; если нет – выбрасывает исключение.</li>
+                            <li>Создаёт <code>ProjectInfo</code> и заполняет <code>ProjectPath</code>, <code>ProjectName</code>.</li>
+                            <li>Получает все файлы по расширениям из <code>settings.FileExtensions</code> (использует <code>Directory.GetFiles</code> с <code>SearchOption.AllDirectories</code>).</li>
+                            <li>Если <code>settings.FilterBuildFolders == true</code> – фильтрует файлы, лежащие в папках <code>bin</code>, <code>obj</code>, <code>packages</code> (вызов <code>IsExcludedBuildPath</code>).</li>
+                            <li>Применяет паттерны включения/исключения через <code>PatternMatcher.FilterByPatterns</code>.</li>
+                            <li>Для каждого включённого файла создаёт <code>FileMetadata</code> с путями и размером.</li>
+                            <li>Для исключённых файлов также сохраняет метаданные в <code>ExcludedFiles</code> (для статистики).</li>
+                            <li>Заполняет метаданные (<code>TotalFiles</code>, <code>IncludedFiles</code>, <code>AppliedFilters</code>) и возвращает <code>ProjectInfo</code>.</li>
+                        </ol>
+                    </div>
+
+                    <!-- 2.4 UniversalProjectAnalyzer.AnalyzeProject -->
+                    <div class="class-card">
+                        <h3>2.4 UniversalProjectAnalyzer.AnalyzeProject</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Сигнатура:</strong></span> <code>ProjectInfo AnalyzeProject(string projectPath)</code>
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Назначение:</strong></span> Анализирует проект: определяет тип, сканирует файлы, строит архитектуру и зависимости.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Алгоритм:</strong></span>
+                        </p>
+                        <ol style="margin-left: 1.5rem;">
+                            <li>Создаёт <code>ProjectInfo</code> и заполняет путь и имя.</li>
+                            <li>Вызывает <code>DetectProjectType(projectPath)</code> (или использует явно заданный тип).</li>
+                            <li>Получает <code>LanguageSettings</code> для этого типа.</li>
+                            <li>Сканирует файлы с учётом языка через <code>ScanProjectFiles</code> (переопределяемо в наследниках).</li>
+                            <li>Анализирует зависимости через <code>AnalyzeDependencies</code> (ищет файлы пакетов).</li>
+                            <li>Строит архитектурные слои через <code>AnalyzeArchitecture</code> (группировка по папкам).</li>
+                            <li>Заполняет <code>ExportMetadata</code>: <code>TotalFiles</code>, <code>EstimatedTokens</code>, <code>ArchitectureLayers</code>, <code>Dependencies</code>.</li>
+                            <li>Возвращает <code>ProjectInfo</code>.</li>
+                        </ol>
+                    </div>
+
+                    <!-- 2.5 CodeProcessor.ProcessCode -->
+                    <div class="class-card">
+                        <h3>2.5 CodeProcessor.ProcessCode</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Сигнатура:</strong></span> <code>string ProcessCode(string code, ExportSettings settings)</code>
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Алгоритм:</strong></span>
+                        </p>
+                        <ol style="margin-left: 1.5rem;">
+                            <li>Если <code>settings.RemoveComments</code> – вызывает статический метод <code>RemoveComments</code>, который удаляет однострочные и многострочные комментарии, сохраняя XML-документацию <code>///</code>.</li>
+                            <li>Если <code>settings.RemoveEmptyLines</code> – вызывает статический метод <code>RemoveEmptyLines</code>, который удаляет избыточные пустые строки, но оставляет одну между логическими блоками (после <code>}</code>).</li>
+                            <li>Возвращает обработанную строку.</li>
+                        </ol>
+                    </div>
+
+                    <!-- 2.6 MarkdownFormatter.FormatHeader -->
+                    <div class="class-card">
+                        <h3>2.6 MarkdownFormatter.FormatHeader</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Сигнатура:</strong></span> <code>string FormatHeader(ProjectInfo projectInfo)</code>
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Назначение:</strong></span> Генерирует заголовок отчёта в Markdown.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Алгоритм:</strong></span> Последовательно добавляет в <code>StringBuilder</code>:
+                        </p>
+                        <ul class="method-list">
+                            <li>Заголовок <code># Code Export для LLM</code>.</li>
+                            <li>Имя проекта и путь.</li>
+                            <li>Блок с метаданными (<code>projectInfo.Metadata.ToMarkdown()</code>).</li>
+                            <li>Рекомендации по LLM (<code>GetLLMRecommendations()</code>).</li>
+                            <li>Quick Links (<code>NavigationGenerator.GenerateQuickLinks</code>).</li>
+                            <li>Architecture Overview (<code>ArchitectureAnalyzer.GenerateArchitectureOverview</code>).</li>
+                            <li>Граф зависимостей (<code>DependencyAnalyzer.GenerateDependencyGraph</code>).</li>
+                            <li>Структуру проекта (<code>ProjectStructureBuilder.BuildHierarchicalTree</code>).</li>
+                            <li>Статистику по папкам (<code>ProjectStructureBuilder.BuildStatisticsByFolder</code>).</li>
+                        </ul>
+                    </div>
+
+                    <!-- 2.7 Утилитные методы -->
+                    <div class="class-card">
+                        <h3>2.7 Утилитные методы (кратко)</h3>
+                        <ul class="method-list">
+                            <li><strong>PatternMatcher.FilterByPatterns</strong> – принимает список файлов и паттерны, возвращает два списка: включённые и исключённые, используя <code>MatchesPattern</code> (с поддержкой wildcard).</li>
+                            <li><strong>ProjectStructureBuilder.BuildHierarchicalTree</strong> – строит вложенную структуру папок и файлов в виде дерева.</li>
+                            <li><strong>ArchitectureAnalyzer.GenerateArchitectureOverview</strong> – анализирует пути файлов и классифицирует их по слоям (Domain, Application, Infrastructure, UI, Tests и т.д.) в зависимости от проекта.</li>
+                            <li><strong>DependencyAnalyzer.GenerateDependencyGraph</strong> – анализирует содержимое файлов (ищет упоминания имён классов) и строит Mermaid-граф.</li>
+                            <li><strong>Logger.Log</strong> – записывает сообщение в лог-файл с уровнем (Info/Warning/Error/Success), добавляя временную метку.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- ========================================================= -->
+                <!-- 3. Итог -->
+                <!-- ========================================================= -->
+                <div class="project-card">
+                    <h2>3. Итог</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                        Мы рассмотрели все ключевые методы, их назначение и логику. Теперь понятно, как программа работает «под капотом». В следующих разделах мы построим карту вызовов и разберём логирование и конфигурацию.
+                    </p>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">
+                        Перейти к <a href="dev/dependencies.html">Карте связывания</a>.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <script src="../index.js"></script>
+</body>
+</html>

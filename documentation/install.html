@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Установка — Multi‑LLMCodeExporter</title>
+ 
+        <link rel="stylesheet" href="../css/variables.css">   
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/navigation.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="../css/clock.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/install.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+    <div id="google_translate_element" style="display:none;"></div>
+    <div class="nav-wrapper"></div>
+    <main>
+        <div id="clocks-container" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></div>
+
+        <div class="container">
+            <div class="page-content">
+            <h1 class="page-title">Установка</h1>
+            
+            <h2>Windows</h2>
+            <ol>
+                <li>Скачайте <code>win-x64.zip</code> из <a href="https://github.com/ALEX340001/Multi-LLMCodeExporter/releases" target="_blank">релизов</a>.</li>
+                <li>Распакуйте архив.</li>
+                <li>Запустите <code>LLMCodeExporter.CLI.exe</code>.</li>
+            </ol>
+
+            <h2>Linux</h2>
+            <ol>
+                <li>Скачайте <code>linux-x64.tar.gz</code>.</li>
+                <li>Распакуйте: <code>tar -xzf linux-x64.tar.gz</code></li>
+                <li>Запустите: <code>./LLMCodeExporter.CLI</code></li>
+            </ol>
+
+            <h2>Сборка из исходников</h2>
+            <pre><code>git clone https://github.com/ALEX340001/Multi-LLMCodeExporter.git
+cd Multi-LLMCodeExporter
+dotnet build</code></pre>
+        </div>
+    </div>
+</main>
+
+
+    <script src="../index.js"></script>
+</body>
+</html>
