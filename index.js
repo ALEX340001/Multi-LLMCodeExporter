@@ -52,11 +52,13 @@ function loadFooter() {
 
 // ===== Обработчик смены языка (делегирование) =====
 function initLanguageSwitcher() {
-    document.body.addEventListener('click', function (e) {
+    // Используем делегирование, но с проверкой, что событие действительно на ссылке
+    document.body.addEventListener('click', function(e) {
         const link = e.target.closest('a[data-lang]');
         if (!link) return;
-        e.preventDefault();
+        e.preventDefault(); // обязательно
         const lang = link.getAttribute('data-lang');
+        console.log('🖱️ Клик по языку:', lang);
         if (lang) window.switchLang(lang);
     });
 }
