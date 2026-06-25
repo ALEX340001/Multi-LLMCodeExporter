@@ -71,20 +71,6 @@ window.switchLang = function (lang) {
     window.location.reload();
 };
 
-// ===== Автоопределение языка браузера =====
-const supportedLangs = ['en', 'es', 'fr', 'de', 'it', 'pt', 'zh-CN', 'ja', 'ko', 'ar', 'tr', 'pl'];
-
-function autoDetectLanguage() {
-    if (document.cookie.includes('googtrans=')) return;
-    const userLang = navigator.language || navigator.userLanguage;
-    const langCode = userLang.split('-')[0];
-    if (langCode === 'ru') return;
-    if (supportedLangs.includes(langCode) || supportedLangs.includes(userLang)) {
-        const targetLang = supportedLangs.includes(userLang) ? userLang : langCode;
-        document.cookie = `googtrans=/ru/${targetLang}; path=/;`;
-        location.reload();
-    }
-}
 
 // ===== Инициализация Google Translate (только виджет, без поиска select) =====
 function initGoogleTranslate() {
@@ -354,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadNav().then(() => {
         loadFooter();
         initClocks();
-        autoDetectLanguage();  // автоопределение перед виджетом
-        initGoogleTranslate(); // загружаем виджет (невидимый)
+        autoDetectLanguage();  
+        initGoogleTranslate();
     });
 });
