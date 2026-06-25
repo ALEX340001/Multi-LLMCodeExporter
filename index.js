@@ -51,17 +51,7 @@ function loadFooter() {
 }
 
 // ===== Обработчик смены языка (делегирование) =====
-function initLanguageSwitcher() {
-    // Используем делегирование, но с проверкой, что событие действительно на ссылке
-    document.body.addEventListener('click', function(e) {
-        const link = e.target.closest('a[data-lang]');
-        if (!link) return;
-        e.preventDefault(); // обязательно
-        const lang = link.getAttribute('data-lang');
-        console.log('🖱️ Клик по языку:', lang);
-        if (lang) window.switchLang(lang);
-    });
-}
+initLanguageSwitcher
 
 // ===== Переключение языка (куки + перезагрузка) =====
 window.switchLang = function (lang) {
@@ -313,6 +303,8 @@ document.addEventListener('DOMContentLoaded', () => {
         loadFooter();
         initClocks();
         autoDetectLanguage(); 
-        
+        document.body.addEventListener('click', function(e) {
+    console.log('Клик на элементе:', e.target, 'Ближайший data-lang:', e.target.closest('a[data-lang]'));
+});
     });
 });
