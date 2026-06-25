@@ -338,9 +338,9 @@ function initClocks() {
 // ===== Запуск всего =====
 document.addEventListener('DOMContentLoaded', () => {
     loadNav().then(() => {
-        loadFooter();
+        loadFooter();        // только один раз
         initClocks();
-        autoDetectLanguage();  
+        // autoDetectLanguage();
         initGoogleTranslate();
     });
 });
