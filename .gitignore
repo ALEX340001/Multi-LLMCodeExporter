@@ -1,0 +1,37 @@
+# Binaries
+bin/
+obj/
+publish/
+*.dll
+*.exe
+*.so
+*.dylib
+
+# User-specific files
+*.user
+*.suo
+.vs/
+
+# Logs and exports
+Exports/
+Logs/
+
+# IDE
+.idea/
+.vscode/
+.editorconfig/
+
+# Local build artifacts
+compiling_linuxx64/
+*.pdb
+*.deps.json
+createdump
+
+# Local scripts
+compile_run.sh
+run-exporter.sh
+*.sh
+
+# Symlinks
+*ссылка*
+*.lnk
