@@ -42,6 +42,10 @@
                         </thead>
                         <tbody>
                             <tr>
+                                <td><code>--start-input</code></td>
+                                <td>Передать управление импортёру. Все последующие аргументы (путь к снапшоту, <code>--output</code> и т.д.) будут переданы импортёру. Если после <code>--start-input</code> нет аргументов, импортёр запустится в интерактивном режиме.</td>
+                            </tr>
+                            <tr>
                                 <td><code>&lt;путь-к-проекту&gt;</code></td>
                                 <td>Папка с проектом (первый аргумент без <code>--</code>). Можно передать путь к <code>.csproj</code> – будет использована его директория.</td>
                             </tr>
@@ -211,7 +215,13 @@ LLMCodeExporter.exe "C:\Projects\MyApp" --exclude="*.Designer.cs" --exclude="Tes
 LLMCodeExporter.exe "C:\Projects\MyWebApp" --web-app --compact-aggressive
 
 # Кастомный порог сворачивания и удаление комментариев
-LLMCodeExporter.exe "C:\Projects\MyApp" --mode=balanced --collapse-threshold 30 --no-comments</code></pre>
+LLMCodeExporter.exe "C:\Projects\MyApp" --mode=balanced --collapse-threshold 30 --no-comments
+
+# Импорт (распаковка снапшота) через основное приложение
+LLMCodeExporter.exe --start-input "snapshot.md" --output "./restored"
+
+# Интерактивный импорт
+LLMCodeExporter.exe --start-input</code></pre>
                 </div>
 
             </div> <!-- /page-content -->
