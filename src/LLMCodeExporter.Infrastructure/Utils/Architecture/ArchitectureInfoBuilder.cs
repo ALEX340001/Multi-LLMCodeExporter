@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -8,18 +8,14 @@
 using System.Linq;
 using LLMCodeExporter.Core.Models;
 using LLMCodeExporter.Infrastructure.Utils.Architecture.Models;
-
 namespace LLMCodeExporter.Infrastructure.Utils.Architecture;
-
 public static class ArchitectureInfoBuilder
 {
     public static ArchitectureInfo Build(ProjectInfo projectInfo, ProjectType projectType)
     {
         var context = ArchitectureAnalyzer.BuildContext(projectInfo, projectType);
         var info = new ArchitectureInfo();
-
         info.ArchitectureStyle = DetermineStyle(context);
-
         foreach (var kvp in context.Layers)
         {
             var layer = kvp.Value;

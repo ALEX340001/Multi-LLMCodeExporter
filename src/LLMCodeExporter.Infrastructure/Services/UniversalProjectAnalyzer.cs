@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using LLMCodeExporter.Infrastructure.Utils;
 using LLMCodeExporter.Infrastructure.Utils.Architecture; 
 namespace LLMCodeExporter.Infrastructure.Services;
-
 /// <summary>
 /// Универсальный анализатор проектов
 /// </summary>
@@ -19,7 +18,6 @@ public class UniversalProjectAnalyzer : IProjectAnalyzer
 {
     private readonly IExportSettings _settings;
     private readonly Dictionary<ProjectType, LanguageSettings> _languageSettings;
-
     public UniversalProjectAnalyzer(IExportSettings settings)
     {
         _settings = settings;
@@ -51,13 +49,11 @@ public virtual ProjectInfo AnalyzeProject(string projectPath)
         ProjectPath = projectPath,
         ProjectName = Path.GetFileName(projectPath)
     };
-
     var detectedType = DetectProjectType(projectPath);
     var languageSettings = _languageSettings[detectedType];
     var files = ScanProjectFiles(projectPath, languageSettings);
     var dependencies = AnalyzeDependencies(files, detectedType);
     var architecture = AnalyzeArchitecture(files, detectedType);
-
     // 2. Заполнение метаданных
     projectInfo.Files = files;
     projectInfo.Metadata = new ExportMetadata
@@ -68,7 +64,6 @@ public virtual ProjectInfo AnalyzeProject(string projectPath)
         ArchitectureLayers = architecture,
         Dependencies = dependencies
     };
-
     // 3. Архитектурная информация и интеграционные точки
     projectInfo.Metadata.Architecture = ArchitectureInfoBuilder.Build(projectInfo, detectedType);
     if (detectedType == ProjectType.Hybrid && _settings is ExportSettings exportSettings)
@@ -90,28 +85,23 @@ public virtual ProjectInfo AnalyzeProject(string projectPath)
     }
 
     // ========== НОВЫЕ ФИЧИ ==========
-
     // 5. Семантическое описание архитектуры
     projectInfo.Metadata.SemanticDescription = SemanticDescriptionGenerator.Generate(
         projectInfo.Metadata.Architecture,
         projectInfo.Metadata.IntegrationPoints,
         detectedType
     );
-
     // 6. Метрики качества кода
     projectInfo.Metadata.Metrics = MetricsCollector.Collect(projectInfo, projectInfo.Metadata.Architecture);
-
     // 7. Ключевые компоненты с аннотациями
     var entryPoints = new List<string> { "Program.cs", "Startup.cs", "ApplicationRunner.cs", "Main.cs" };
     if (_settings is ExportSettings settings && settings.EntryPoints.Any())
         entryPoints = settings.EntryPoints;
-
     projectInfo.Metadata.KeyComponents = AnnotationGenerator.GenerateAnnotations(
         projectInfo,
         projectInfo.Metadata.Architecture,
         entryPoints
     );
-
     return projectInfo;
 }
 
@@ -238,7 +228,7 @@ public virtual ProjectInfo AnalyzeProject(string projectPath)
                     .ToList();
                 dependencies.AddRange(lines);
             }
-            
+
             catch (Exception ex)
                 {
                     Logger.LogError($"Ошибка чтения requirements.txt: {requirementsFile.FullPath}", ex);

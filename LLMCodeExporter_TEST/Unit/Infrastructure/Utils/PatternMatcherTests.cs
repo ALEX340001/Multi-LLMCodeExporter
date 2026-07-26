@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -8,9 +8,7 @@
 ﻿using LLMCodeExporter.Infrastructure.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-
 namespace LLMCodeExporter.Tests.Unit.Infrastructure.Utils
-
 {
     [TestClass]
     public class PatternMatcherTests
@@ -21,10 +19,8 @@ namespace LLMCodeExporter.Tests.Unit.Infrastructure.Utils
             // Arrange
             string filePath = @"src\Services\UserService.cs";
             string pattern = "*.cs";
-
             // Act
             bool result = PatternMatcher.MatchesPattern(filePath, pattern);
-
             // Assert
             Assert.IsTrue(result, $"Файл {filePath} должен соответствовать паттерну {pattern}");
         }
@@ -35,10 +31,8 @@ namespace LLMCodeExporter.Tests.Unit.Infrastructure.Utils
             // Arrange
             string filePath = @"src\UI\Form1.Designer.cs";
             string pattern = "*.Designer.cs";
-
             // Act
             bool result = PatternMatcher.MatchesPattern(filePath, pattern);
-
             // Assert
             Assert.IsTrue(result, $"Файл {filePath} должен соответствовать паттерну исключения {pattern}");
         }
@@ -54,9 +48,7 @@ namespace LLMCodeExporter.Tests.Unit.Infrastructure.Utils
                 @"src\Domain\User.cs",
                 @"src\Tests\UserTests.cs"
             };
-
             var excludePatterns = new List<string> { "*.Designer.cs", "Tests" };
-
             // Act
             (List<string> included, List<string> excluded) = PatternMatcher.FilterByPatterns(
                 files,
@@ -64,7 +56,6 @@ namespace LLMCodeExporter.Tests.Unit.Infrastructure.Utils
                 new List<string>(), // include all
                 excludePatterns
             );
-
             // Assert
             Assert.AreEqual(2, included.Count, "Должно быть 2 включенных файла");
             Assert.AreEqual(2, excluded.Count, "Должно быть 2 исключенных файла");

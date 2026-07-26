@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,19 +6,16 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 namespace LLMCodeExporter.Infrastructure.Formatters;
-
 using Core.Interfaces;
 using Core.Models;
 using Utils;
 using System.Text;
-
 public class PlainTextFormatter : IOutputFormatter
 {
     public string FormatHeader(ProjectInfo projectInfo)
     {
         var sb = new StringBuilder();
         var metadata = projectInfo.Metadata;
-
         sb.AppendLine("╔════════════════════════════════════════════════════════════════╗");
         sb.AppendLine("║            CODE EXPORT ДЛЯ НЕЙРОСЕТИ v0.3                      ║");
         sb.AppendLine("╚════════════════════════════════════════════════════════════════╝");
@@ -37,7 +34,6 @@ public class PlainTextFormatter : IOutputFormatter
         }
         sb.AppendLine($"Рекомендуется:   {metadata.RecommendedContextWindow}");
         sb.AppendLine();
-
         if (metadata.AppliedFilters.Any())
         {
             sb.AppendLine("Применённые фильтры:");
@@ -55,7 +51,6 @@ public class PlainTextFormatter : IOutputFormatter
         sb.AppendLine();
         sb.AppendLine("═════════════════════════════════════════════════════════════════");
         sb.AppendLine();
-
         // ===== ДОБАВЛЯЕМ АРХИТЕКТУРНЫЕ СЛОИ =====
         var arch = projectInfo.Metadata.Architecture;
         if (arch.Layers.Any())
@@ -71,8 +66,6 @@ public class PlainTextFormatter : IOutputFormatter
             }
             sb.AppendLine();
         }
-
-
         // Семантическое описание
 if (!string.IsNullOrEmpty(projectInfo.Metadata.SemanticDescription))
 {
@@ -161,7 +154,6 @@ if (projectInfo.Metadata.KeyComponents.Any())
     {
         var sb = new StringBuilder();
         var metadata = projectInfo.Metadata;
-
         sb.AppendLine();
         sb.AppendLine(new string('─', 80));
         sb.AppendLine();

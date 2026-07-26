@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -11,9 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using LLMCodeExporter.Core.Models;
-
 namespace LLMCodeExporter.Infrastructure.Utils.Architecture;
-
 public static class DependencyRuleChecker
 {
     /// <summary>
@@ -25,7 +23,6 @@ public static class DependencyRuleChecker
         List<DependencyRule> rules)
     {
         var violations = new List<DependencyViolation>();
-
         // Строим карту: относительный путь файла -> слой
         var fileToLayer = new Dictionary<string, string>();
         foreach (var layer in architecture.Layers)
@@ -41,16 +38,13 @@ public static class DependencyRuleChecker
         {
             if (!fileToLayer.TryGetValue(file.RelativePath, out var sourceLayer))
                 continue;
-
             var imports = ExtractImports(file.FullPath);
             foreach (var import in imports)
             {
                 var targetFile = ResolveImportToFile(import, file.RelativePath, files);
                 if (targetFile == null) continue;
-
                 if (!fileToLayer.TryGetValue(targetFile.RelativePath, out var targetLayer))
                     continue;
-
                 // Проверяем правила
                 foreach (var rule in rules)
                 {
@@ -85,11 +79,9 @@ public static class DependencyRuleChecker
         {
             var content = File.ReadAllText(filePath);
             var lines = content.Split('\n');
-
             foreach (var line in lines)
             {
                 var trimmed = line.Trim();
-
                 // C# using
                 if (trimmed.StartsWith("using "))
                 {
@@ -138,17 +130,14 @@ public static class DependencyRuleChecker
         {
             var currentDir = Path.GetDirectoryName(currentFile) ?? "";
             var importPath = import.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
-
             // Убираем расширение, если оно есть, так как файлы могут быть без расширения в импорте
             var importWithoutExt = importPath;
             if (importPath.Contains('.'))
                 importWithoutExt = Path.ChangeExtension(importPath, null);
-
             // Пробуем найти файл по относительному пути
             var relative = Path.GetFullPath(Path.Combine(currentDir, importWithoutExt));
             var candidates = files.Where(f => f.FullPath.EndsWith(importWithoutExt, StringComparison.OrdinalIgnoreCase) ||
                                                f.FullPath.Replace('\\', '/').Contains(importWithoutExt.Replace('\\', '/')));
-
             // Отфильтруем по точному совпадению с относительным путём
             var best = candidates.FirstOrDefault(f =>
             {
@@ -158,10 +147,8 @@ public static class DependencyRuleChecker
                        importNorm.Contains(normalized) ||
                        f.FullPath.Replace('\\', '/').Contains(importNorm);
             });
-
             if (best != null)
                 return best;
-
             // Если не нашли, пробуем по имени файла
             var fileName = Path.GetFileName(importWithoutExt);
             var byName = files.FirstOrDefault(f => Path.GetFileNameWithoutExtension(f.RelativePath).Equals(fileName, StringComparison.OrdinalIgnoreCase));

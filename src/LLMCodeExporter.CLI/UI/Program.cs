@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -9,13 +9,25 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;          
 using LLMCodeExporter.Core.Interfaces;
 using LLMCodeExporter.Core.Models;
 using LLMCodeExporter.Infrastructure.Services;
 using LLMCodeExporter.Infrastructure.Utils;
 using LLMCodeExporter.CLI.UI;
+using LLMCode_Importer;                 
 
 Console.OutputEncoding = Encoding.UTF8;
+
+// ============================================================
+//  НОВЫЙ БЛОК: если передан --start-input – запускаем импортёр
+// ============================================================
+if (args.Length > 0 && args[0] == "--start-input")
+{
+    var importerArgs = args.Skip(1).ToArray();
+    // Вызываем метод Main импортёра (он асинхронный)
+    return await LLMCode_Importer.Program.Main(importerArgs);
+}
 
 // === 1. Парсинг аргументов командной строки ===
 var parseResult = CliArgumentParser.Parse(args);
@@ -23,7 +35,7 @@ var parseResult = CliArgumentParser.Parse(args);
 if (parseResult.ShowHelp)
 {
     HelpPrinter.Print();
-    return;
+    return 0;                          // <-- изменено на return 0
 }
 
 if (parseResult.HasErrors)
@@ -32,7 +44,7 @@ if (parseResult.HasErrors)
     Console.WriteLine($"Ошибка: {parseResult.ErrorMessage}");
     Console.ResetColor();
     Console.WriteLine("Используйте --help для справки.");
-    return;
+    return 1;                          // <-- изменено на return 1
 }
 
 // === 2. Проверка CLI режима ===
@@ -40,7 +52,7 @@ if (parseResult.HasCliArgs && string.IsNullOrEmpty(parseResult.ProjectPath))
 {
     Console.WriteLine("Ошибка: путь к проекту не указан.");
     Console.WriteLine("Используйте --help для справки.");
-    return;
+    return 1;
 }
 
 // === 3. Заголовок приложения (только в интерактивном режиме) ===
@@ -73,7 +85,7 @@ if (!parseResult.HasCliArgs)
         Console.WriteLine("Экспорт отменен.");
         Console.WriteLine("\nНажмите любую клавишу для выхода...");
         Console.ReadKey();
-        return;
+        return 0;
     }
 }
 
@@ -85,7 +97,7 @@ if (!PathNormalizer.ValidateAndPrintError(projectPath))
 {
     Console.WriteLine("\nНажмите любую клавишу для выхода...");
     Console.ReadKey();
-    return;
+    return 1;
 }
 
 // === 7. Выполнение экспорта ===
@@ -106,7 +118,7 @@ try
             Logger.LogError($"CLI ошибка: {cliResult.ErrorMessage}");
             Console.WriteLine("\nНажмите любую клавишу для выхода...");
             Console.ReadKey();
-            return;
+            return 1;
         }
         projectInfo = cliResult.ProjectInfo!;
         settings = cliResult.Settings!;
@@ -119,7 +131,7 @@ try
         {
             Console.WriteLine("\nНажмите любую клавишу для выхода...");
             Console.ReadKey();
-            return;
+            return 0;
         }
         if (!interactiveResult.Success)
         {
@@ -129,7 +141,7 @@ try
             Logger.LogError($"Интерактивная ошибка: {interactiveResult.ErrorMessage}");
             Console.WriteLine("\nНажмите любую клавишу для выхода...");
             Console.ReadKey();
-            return;
+            return 1;
         }
         projectInfo = interactiveResult.ProjectInfo!;
         settings = interactiveResult.Settings!;
@@ -142,7 +154,7 @@ try
         Logger.LogWarning("Экспорт отменён - нет файлов после фильтрации.");
         Console.WriteLine("Нажмите любую клавишу для выхода...");
         Console.ReadKey();
-        return;
+        return 0;
     }
 
     // === 9. Экспорт ===
@@ -161,6 +173,7 @@ catch (Exception ex)
     Console.WriteLine(ex.StackTrace);
     Console.ResetColor();
     Logger.LogError("Критическая ошибка", ex);
+    return 1;
 }
 
 // === 10. Завершение ===
@@ -172,10 +185,11 @@ if (!parseResult.HasCliArgs)
     Console.ReadKey();
 }
 
+return 0;
+
 // ============================================================================
 // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 // ============================================================================
-
 static void PrintNoFilesError(ProjectInfo projectInfo, ExportSettings settings)
 {
     Console.ForegroundColor = ConsoleColor.Yellow;

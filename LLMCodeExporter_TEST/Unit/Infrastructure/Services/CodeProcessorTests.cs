@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -8,14 +8,12 @@
 using LLMCodeExporter.Infrastructure.Services;
 using LLMCodeExporter.Core.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 namespace LLMCodeExporter.Tests.Unit.Infrastructure.Services
 {
     [TestClass]
     public class CodeProcessorTests
     {
         private CodeProcessor? _processor;
-
         [TestInitialize]
         public void Setup()
         {
@@ -40,9 +38,7 @@ namespace LLMCodeExporter.Tests.Unit.Infrastructure.Services
                 RemoveComments = true,
                 RemoveEmptyLines = false
             };
-
             string result = _processor!.ProcessCode(code, settings);
-
             Assert.IsFalse(result.Contains("// Single line comment"));
             Assert.IsFalse(result.Contains("/* Multi-line"));
             Assert.IsFalse(result.Contains("// Another comment"));
@@ -59,7 +55,6 @@ namespace LLMCodeExporter.Tests.Unit.Infrastructure.Services
                 RemoveComments = false,
                 RemoveEmptyLines = false
             };
-
             string result = _processor!.ProcessCode(code, settings);
             Assert.IsTrue(result.Contains("// This is a comment"));
         }
@@ -81,7 +76,6 @@ namespace LLMCodeExporter.Tests.Unit.Infrastructure.Services
                     // Regular comment
                     public class Test { public void Method() { } }";
             var settings = new ExportSettings { RemoveComments = true };
-
             string result = _processor!.ProcessCode(code, settings);
             Assert.IsFalse(result.Contains("// Regular comment"));
             Assert.IsTrue(result.Contains("/// <summary>"));

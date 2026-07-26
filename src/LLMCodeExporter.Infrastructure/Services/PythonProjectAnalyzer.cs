@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -10,7 +10,6 @@ using LLMCodeExporter.Core.Models;
 using LLMCodeExporter.Infrastructure.Utils;
 using LLMCodeExporter.Infrastructure.Utils.Architecture;
 namespace LLMCodeExporter.Infrastructure.Services;
-
 /// <summary>
 /// Анализатор проектов Python
 /// </summary>
@@ -20,13 +19,10 @@ public class PythonProjectAnalyzer : UniversalProjectAnalyzer
     public PythonProjectAnalyzer(IExportSettings settings) : base(settings)
     {
     }
-
-
     protected override List<FileMetadata> ScanProjectFiles(string projectPath, LanguageSettings settings)
     {
         // Специализированная реализация для Python
         var files = new List<FileMetadata>();
-
         foreach (var extension in settings.FileExtensions)
         {
             foreach (var file in Directory.GetFiles(projectPath, $"*{extension}", SearchOption.AllDirectories))
@@ -34,10 +30,8 @@ public class PythonProjectAnalyzer : UniversalProjectAnalyzer
                 // Проверка исключений
                 if (ShouldExclude(file, settings.ExcludeFolders))
                     continue;
-
                 var fileInfo = new FileInfo(file);
                 var estimatedTokens = EstimateFileTokens(file);
-
                 // Дополнительная логика для Python файлов
                 if (file.EndsWith(".py"))
                 {
@@ -61,12 +55,10 @@ public class PythonProjectAnalyzer : UniversalProjectAnalyzer
     public override List<string> AnalyzePythonDependencies(List<FileMetadata> files)
     {
         var dependencies = new List<string>();
-
         // Ищем requirements.txt
         var requirementsFile = files.FirstOrDefault(f =>
             f.RelativePath.EndsWith("requirements.txt") ||
             f.FullPath.EndsWith("requirements.txt"));
-
         if (requirementsFile != null)
         {
             try
@@ -76,7 +68,6 @@ public class PythonProjectAnalyzer : UniversalProjectAnalyzer
                     .Where(line => !string.IsNullOrWhiteSpace(line) && !line.Trim().StartsWith("#"))
                     .Select(line => line.Trim())
                     .ToList();
-
                 dependencies.AddRange(lines);
             }
            catch
@@ -89,7 +80,6 @@ public class PythonProjectAnalyzer : UniversalProjectAnalyzer
         var setupFile = files.FirstOrDefault(f =>
             f.RelativePath.EndsWith("setup.py") ||
             f.FullPath.EndsWith("setup.py"));
-
         if (setupFile != null)
         {
             dependencies.Add("setup.py обнаружен");
@@ -98,7 +88,6 @@ public class PythonProjectAnalyzer : UniversalProjectAnalyzer
         var pyprojectFile = files.FirstOrDefault(f =>
             f.RelativePath.EndsWith("pyproject.toml") ||
             f.FullPath.EndsWith("pyproject.toml"));
-
         if (pyprojectFile != null)
         {
             dependencies.Add("pyproject.toml обнаружен");

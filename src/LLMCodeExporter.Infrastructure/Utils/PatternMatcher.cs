@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,9 +6,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 ﻿namespace LLMCodeExporter.Infrastructure.Utils;
-
 using System.Text.RegularExpressions;
-
 /// <summary>
 /// Утилита для сопоставления файлов с паттернами (glob patterns)
 /// </summary>
@@ -22,7 +20,6 @@ public static class PatternMatcher
     // Нормализуем пути к формату с '/' для упрощения
     string normalizedPath = filePath.Replace('\\', '/');
     string normalizedPattern = pattern.Replace('\\', '/');
-
     // Паттерн с расширением (например: *.Designer.cs)
     if (normalizedPattern.StartsWith("*"))
     {
@@ -87,11 +84,9 @@ public static class PatternMatcher
     {
         var included = new List<T>();
         var excluded = new List<T>();
-
         foreach (var file in files)
         {
             string filePath = pathSelector(file);
-
             // Сначала проверяем исключения
             if (excludePatterns.Any() && MatchesAnyPattern(filePath, excludePatterns))
             {

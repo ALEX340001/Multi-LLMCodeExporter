@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -12,9 +12,7 @@ using LLMCodeExporter.Core.Interfaces;
 using LLMCodeExporter.Core.Models;
 using LLMCodeExporter.Infrastructure.Services;
 using LLMCodeExporter.Infrastructure.Utils;
-
 namespace LLMCodeExporter.CLI.UI;
-
 /// <summary>
 /// Обработчик интерактивного режима работы
 /// </summary>
@@ -48,7 +46,6 @@ public static class InteractiveModeHandler
         Console.WriteLine();
         Console.WriteLine($"Текущая папка: {Directory.GetCurrentDirectory()}");
         Console.WriteLine();
-
         // Если есть аргументы командной строки (drag&drop), используем их
         if (args.Length > 0 && !args[0].StartsWith("--") && !args[0].StartsWith("-"))
         {
@@ -78,7 +75,6 @@ public static class InteractiveModeHandler
             "Введите путь к проекту или перетащите папку сюда:",
             maxAttempts: 5
         );
-
         if (string.IsNullOrEmpty(pathFromUser))
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -86,10 +82,8 @@ public static class InteractiveModeHandler
             Console.ResetColor();
             string currentDir = Directory.GetCurrentDirectory();
             Console.WriteLine($"Текущая директория: {currentDir}");
-
             if (InputHelper.ReadYesNo("Использовать текущую директорию как проект?", defaultValue: true))
                 return currentDir;
-
             return null;
         }
 
@@ -102,19 +96,16 @@ public static class InteractiveModeHandler
     public static InteractiveResult Execute(string projectPath)
     {
         var result = new InteractiveResult();
-
         try
         {
             // Инициализация сервисов
             IFileScanner scanner = new FileScanner();
             ICodeProcessor processor = new CodeProcessor();
             IExportService exporter = new ExportService(processor);
-
             // Первичное сканирование для определения типа проекта
             Console.WriteLine("⏳ Анализ структуры проекта...");
             var (tempSettings, detectedType) = CreateTempSettings(projectPath);
             var projectInfo = scanner.ScanProject(projectPath, tempSettings);
-
             // Если файлы не найдены, пробуем альтернативные расширения
             if (!projectInfo.Files.Any())
             {
@@ -131,7 +122,6 @@ public static class InteractiveModeHandler
             Console.WriteLine($"✓ Анализ завершен! Найдено файлов: {projectInfo.Files.Count}");
             Console.WriteLine();
             InteractiveMenu.ShowProjectStats(projectInfo);
-
             // Настройка экспорта через меню
             ExportSettings? configuredSettings = InteractiveMenu.ConfigureSettings(projectInfo);
             if (configuredSettings == null)
@@ -144,7 +134,6 @@ public static class InteractiveModeHandler
             // Повторное сканирование с выбранными настройками
             Console.WriteLine("⏳ Сканирование проекта с выбранными настройками...");
             projectInfo = scanner.ScanProject(projectPath, configuredSettings);
-
             // Проверка соответствия выбранных языков содержимому проекта
             if (!ValidateLanguageMatch(projectInfo, configuredSettings))
             {
@@ -152,7 +141,6 @@ public static class InteractiveModeHandler
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("⚠️ Хотите изменить выбор языков или продолжить с текущими настройками?");
                 Console.ResetColor();
-                
                 if (InputHelper.ReadYesNo("Продолжить с текущими настройками?", defaultValue: false))
                 {
                     Logger.LogWarning("Пользователь продолжил экспорт, несмотря на несоответствие языков");
@@ -187,19 +175,16 @@ public static class InteractiveModeHandler
         var settings = new ExportSettings();
         var detectedType = ProjectTypeDetector.Detect(projectPath);
         Logger.Log($"Автоопределенный тип проекта: {detectedType}");
-
         switch (detectedType)
         {
             case ProjectType.Python:
                 settings.ApplyPythonProjectPreset();
                 Console.WriteLine($"ℹ️  Определен тип проекта: Python");
                 break;
-
             case ProjectType.WebApp:
                 settings.ApplyWebAppPreset();
                 Console.WriteLine($"ℹ️  Определен тип проекта: Веб-приложение");
                 break;
-
             case ProjectType.Hybrid:
                 var langs = ProjectTypeDetector.DetectLanguages(projectPath);
                 if (langs.Count >= 2)
@@ -215,7 +200,6 @@ public static class InteractiveModeHandler
                 settings.ApplyHybridPreset();
                 Console.WriteLine($"ℹ️  Определен тип проекта: Гибридный ({settings.BackendLanguage} + {settings.FrontendLanguage})");
                 break;
-
             case ProjectType.CSharp:
             default:
                 settings.FileExtensions = new[] { "*.cs" };
@@ -233,30 +217,25 @@ public static class InteractiveModeHandler
     {
         Logger.LogWarning("Не найдено файлов с текущими расширениями, пробуем альтернативные");
         Console.WriteLine("⚠ Не найдено файлов с определенными расширениями, пробуем другие типы...");
-
         var alternativeExtensions = new[]
         {
             new[] { "*.js", "*.jsx", "*.ts", "*.tsx", "*.html", "*.htm", "*.css", "*.scss" },
             new[] { "*.py", "*.pyw" },
             new[] { "*.cs" }
         };
-
         foreach (var extensions in alternativeExtensions)
         {
             var tempSettings = new ExportSettings { FileExtensions = extensions };
             var projectInfo = scanner.ScanProject(projectPath, tempSettings);
-
             if (projectInfo.Files.Any())
             {
                 Logger.Log($"Найдены файлы с расширениями: {string.Join(", ", extensions)}");
-
                 if (extensions.Contains("*.js") || extensions.Contains("*.html") || extensions.Contains("*.css"))
                     detectedType = ProjectType.WebApp;
                 else if (extensions.Contains("*.py"))
                     detectedType = ProjectType.Python;
                 else if (extensions.Contains("*.cs"))
                     detectedType = ProjectType.CSharp;
-
                 return projectInfo;
             }
         }
@@ -292,14 +271,11 @@ public static class InteractiveModeHandler
     {
         if (settings.ProjectType != ProjectType.Hybrid)
             return true;
-
         var backendExtensions = LanguageSettings.ForLanguage(settings.BackendLanguage).FileExtensions;
         var frontendExtensions = LanguageSettings.ForLanguage(settings.FrontendLanguage).FileExtensions;
         var allExtensions = backendExtensions.Union(frontendExtensions).ToHashSet();
-
         bool hasMatchingFiles = projectInfo.Files.Any(f =>
             allExtensions.Contains(Path.GetExtension(f.RelativePath).ToLowerInvariant()));
-
         if (!hasMatchingFiles)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;

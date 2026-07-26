@@ -1,4 +1,4 @@
-// js/modules/config.js
+﻿// js/modules/config.js
 
 export const CLI_HELP = [
     { key: '--mode=compact|balanced|full', desc: 'Режим экспорта: структура (30%), сбалансированный (60%), полный (100%)' },

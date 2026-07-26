@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,17 +6,14 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 namespace LLMCodeExporter.Infrastructure.Services;
-
 using Core.Interfaces;
 using Core.Models;
 using LLMCodeExporter.Infrastructure.Utils;
-
 public class FileScanner : IFileScanner
 {
     public ProjectInfo ScanProject(string projectPath, ExportSettings settings)
     {
         Logger.Log($"Начало сканирования: {projectPath}");
-
         if (!Directory.Exists(projectPath))
         {
             Logger.LogError($"Путь не найден: {projectPath}");
@@ -28,20 +25,15 @@ public class FileScanner : IFileScanner
             ProjectPath = projectPath,
             ProjectName = Path.GetFileName(projectPath)
         };
-
         Logger.Log($"Поиск файлов с расширениями: {string.Join(", ", settings.FileExtensions)}");
-
         var allFiles = settings.FileExtensions
             .SelectMany(ext => Directory.GetFiles(projectPath, ext, SearchOption.AllDirectories))
             .Distinct()
             .ToArray();
-
         Logger.Log($"Найдено файлов (до фильтрации): {allFiles.Length}");
-
         var filesAfterBuildFilter = settings.FilterBuildFolders
             ? allFiles.Where(f => !IsExcludedBuildPath(f, projectPath, settings.ExcludeFolders)).ToArray()
             : allFiles;
-
         if (settings.FilterBuildFolders && allFiles.Length != filesAfterBuildFilter.Length)
         {
             int excluded = allFiles.Length - filesAfterBuildFilter.Length;
@@ -57,7 +49,6 @@ public class FileScanner : IFileScanner
         );
         var includedFiles = filterResult.included;
         var excludedFiles = filterResult.excluded;
-
         if (settings.ExcludePatterns.Any())
         {
             Logger.Log($"Применены паттерны исключения: {string.Join(", ", settings.ExcludePatterns)}");
@@ -93,20 +84,16 @@ public class FileScanner : IFileScanner
         }
 
         projectInfo.TotalCharacters = projectInfo.Files.Sum(f => f.SizeInBytes);
-
         if (settings.ExcludePatterns.Any())
             projectInfo.Metadata.AppliedFilters.Add($"Исключено: {string.Join(", ", settings.ExcludePatterns)}");
         if (settings.IncludeOnlyPatterns.Any())
             projectInfo.Metadata.AppliedFilters.Add($"Только: {string.Join(", ", settings.IncludeOnlyPatterns)}");
-
         Logger.LogSuccess($"Сканирование завершено: {projectInfo.TotalFiles} файлов, ~{projectInfo.EstimatedTokens:N0} токенов");
         if (projectInfo.ExcludedFiles.Any())
             Logger.Log($"Исключено всего: {projectInfo.ExcludedFiles.Count} файлов");
-
         projectInfo.Metadata.TotalFiles = projectInfo.TotalScannedFiles;
         projectInfo.Metadata.IncludedFiles = projectInfo.TotalFiles;
         projectInfo.Metadata.ProjectName = projectInfo.ProjectName;
-
         return projectInfo;
     }
 

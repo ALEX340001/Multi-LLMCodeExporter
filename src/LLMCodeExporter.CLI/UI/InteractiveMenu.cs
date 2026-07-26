@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -10,18 +10,15 @@ using System;
 using System.IO;
 using System.Linq;
 using LLMCodeExporter.Core.Models;
-
 public static class InteractiveMenu
 {
     public static ExportSettings? ConfigureSettings(ProjectInfo projectInfo)
     {
         var settings = new ExportSettings();
-
         Console.WriteLine("╔════════════════════════════════════════╗");
         Console.WriteLine("║     ⚙️  НАСТРОЙКА ЭКСПОРТА v2.0       ║");
         Console.WriteLine("╚════════════════════════════════════════╝");
         Console.WriteLine();
-
         // 0. Тип проекта
         Console.WriteLine("0️⃣  Тип проекта:");
         Console.WriteLine("   [1] C# / .NET");
@@ -29,7 +26,6 @@ public static class InteractiveMenu
         Console.WriteLine("   [3] Веб-приложение (JS, CSS, HTML)");
         Console.WriteLine("   [4] Гибридный (выбор языков)");
         int projectTypeChoice = InputHelper.ReadChoice("\n   Выбор", 1, 4, 1);
-
         switch (projectTypeChoice)
         {
             case 1:
@@ -64,7 +60,6 @@ public static class InteractiveMenu
         }
 
         Console.WriteLine();
-
         // 1. Режим экспорта (остаётся без изменений)
         Console.WriteLine("1️⃣  Режим экспорта:");
         Console.WriteLine("   [1] 🎯 Compact - только структура и сигнатуры (~30% размера)");
@@ -80,7 +75,6 @@ public static class InteractiveMenu
         };
         Console.WriteLine($"   ✓ Выбран режим: {settings.Mode}");
         Console.WriteLine();
-
         // 2. Настройка фильтров 
         Console.WriteLine("2️⃣  Дополнительная фильтрация:");
         Console.WriteLine("   Предустановки:");
@@ -99,9 +93,7 @@ public static class InteractiveMenu
 
         if (filterPreset == 1 && InputHelper.ReadYesNo("\n   Добавить кастомные фильтры?", defaultValue: false))
             ConfigureCustomFilters(settings);
-
         Console.WriteLine();
-
         // 3. Формат экспорта 
         Console.WriteLine("3️⃣  Формат экспорта:");
         Console.WriteLine("   [1] Markdown (рекомендуется для ChatGPT/Claude)");
@@ -116,7 +108,6 @@ public static class InteractiveMenu
             4 => ExportFormat.MarkdownWithJson,
             _ => ExportFormat.Markdown
         };
-
         // 4. Дополнительные оптимизации
         if (settings.Mode != ExportMode.Full)
         {

@@ -1,4 +1,4 @@
-// js/modules/clipboard.js
+﻿// js/modules/clipboard.js
 
 import { elCmdDisplay, showToast } from './dom.js';
 import { getHistory } from './providers.js';

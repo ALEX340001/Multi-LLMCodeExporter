@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,7 +6,6 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 ﻿namespace LLMCodeExporter.Infrastructure.Services;
-
 using System.Text;
 using System.Text.RegularExpressions;
 using Core.Models;
@@ -17,7 +16,6 @@ using LLMCodeExporter.Infrastructure.Utils;
 public class CodeOptimizer
 {
     private readonly ExportSettings _settings;
-
     public CodeOptimizer(ExportSettings settings)
     {
         _settings = settings;
@@ -36,12 +34,10 @@ public class CodeOptimizer
 
         var lines = content.Split('\n');
         var result = new StringBuilder();
-
         // Консолидация using директив
         if (_settings.ConsolidateUsings)
         {
             var (usings, codeWithoutUsings) = ExtractUsings(lines);
-
             if (usings.Any())
             {
                 result.AppendLine("// Consolidated usings");
@@ -75,11 +71,9 @@ public class CodeOptimizer
     {
         var usings = new List<string>();
         var codeLines = new List<string>();
-
         foreach (var line in lines)
         {
             var trimmed = line.TrimStart();
-
             if (trimmed.StartsWith("using ") && trimmed.EndsWith(";"))
             {
                 usings.Add(line.Trim());
@@ -103,11 +97,9 @@ private string ExtractSignatures(string[] lines, string filePath)
     var className = "";
     var braceStack = new Stack<char>(); // стек для отслеживания вложенности {}
     var signatures = new List<string>();
-
     foreach (var line in lines)
     {
         var trimmed = line.Trim();
-
         // Определяем начало класса/интерфейса/структуры
         if (!inClass && Regex.IsMatch(trimmed, @"^\s*(public|internal|private)?\s*(abstract|sealed|static)?\s*(class|interface|struct|enum)\s+\w+"))
         {
@@ -189,9 +181,6 @@ private string ExtractSignatures(string[] lines, string filePath)
 
     return result.ToString();
 }
-
-
-
     /// <summary>
     /// Сворачивает длинные методы (Balanced режим)
     /// </summary>
@@ -201,12 +190,10 @@ private string ExtractSignatures(string[] lines, string filePath)
         var methodStartLine = -1;
         var methodLines = new List<string>();
         var braceCount = 0;
-
         for (int i = 0; i < lines.Length; i++)
         {
             var line = lines[i];
             var trimmed = line.Trim();
-
             // Определяем начало метода
             if (methodStartLine == -1 &&
                 Regex.IsMatch(trimmed, @"^\s*(public|private|protected|internal)\s+(static\s+)?(async\s+)?[\w<>\[\],\s]+\s+\w+\s*\("))
@@ -221,10 +208,8 @@ private string ExtractSignatures(string[] lines, string filePath)
             if (methodStartLine >= 0)
             {
                 methodLines.Add(line);
-
                 if (trimmed.Contains("{")) braceCount++;
                 if (trimmed.Contains("}")) braceCount--;
-
                 // Конец метода
                 if (braceCount == 0 && trimmed == "}")
                 {
@@ -233,14 +218,12 @@ private string ExtractSignatures(string[] lines, string filePath)
                     {
                         // Сворачиваем длинный метод
                         result.AppendLine(methodLines[0]); // Сигнатура
-
                         if (!methodLines[0].Trim().EndsWith("{"))
                         {
                             result.AppendLine("    {");
                         }
 
                         result.AppendLine($"        // ... method body collapsed ({methodLines.Count} lines)");
-
                         // Показываем первые 3 строки для контекста
                         for (int j = 1; j < Math.Min(4, methodLines.Count - 1); j++)
                         {
@@ -298,7 +281,6 @@ private string ExtractSignatures(string[] lines, string filePath)
       var normalized = filePath.Replace('\\', '/');
 if (normalized.Contains("/Test") || normalized.Contains("/Tests"))
     return "[test]";
-    
         return "";
     }
 }

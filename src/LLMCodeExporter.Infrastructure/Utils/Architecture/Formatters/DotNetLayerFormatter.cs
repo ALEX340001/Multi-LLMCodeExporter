@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -10,9 +10,7 @@ using System.Linq;
 using System.Text;
 using LLMCodeExporter.Core.Models;
 using LLMCodeExporter.Infrastructure.Utils.Architecture.Models;
-
 namespace LLMCodeExporter.Infrastructure.Utils.Architecture.Formatters;
-
 /// <summary>
 /// Форматтер для .NET проектов (Clean Architecture, MVC)
 /// </summary>
@@ -25,12 +23,10 @@ public class DotNetLayerFormatter : ILayerFormatter
         ProjectType.AutoDetect,
         ProjectType.Generic
     };
-
     public bool CanHandle(ArchitectureContext context)
     {
         if (context.ProjectType == ProjectType.Hybrid || context.ProjectType == ProjectType.WebApp)
             return false;
-
         return _supportedTypes.Contains(context.ProjectType) ||
                context.Files.Any(f => f.RelativePath.EndsWith(".cs") || f.RelativePath.EndsWith(".java")); // <-- исправлено
     }
@@ -38,7 +34,6 @@ public class DotNetLayerFormatter : ILayerFormatter
     public string Format(ArchitectureContext context)
     {
         var sb = new StringBuilder();
-
         if (HasCleanArchitecture(context.Layers))
         {
             sb.AppendLine("Проект следует **Clean Architecture** (многослойная архитектура):");
@@ -74,10 +69,8 @@ public class DotNetLayerFormatter : ILayerFormatter
     private static void FormatLayer(StringBuilder sb, Dictionary<string, LayerInfo> layers, string name, string description, bool showKeyFiles)
     {
         if (!layers.TryGetValue(name, out var layer)) return;
-
         var count = layer.FileCount;
         sb.Append($"- **{name}** ({count} файлов) – {description}");
-
         if (showKeyFiles && layer.KeyFiles.Any())
         {
             var files = layer.KeyFiles.Select(f => Path.GetFileNameWithoutExtension(f));

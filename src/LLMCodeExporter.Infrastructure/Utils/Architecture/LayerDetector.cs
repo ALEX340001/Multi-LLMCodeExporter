@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -11,9 +11,7 @@ using System.IO;
 using System.Linq;
 using LLMCodeExporter.Core.Models;
 using LLMCodeExporter.Infrastructure.Utils.Architecture.Models;
-
 namespace LLMCodeExporter.Infrastructure.Utils.Architecture;
-
 /// <summary>
 /// Детектор слоёв архитектуры для разных типов проектов
 /// </summary>
@@ -33,18 +31,15 @@ public static class LayerDetector
     public static Dictionary<string, LayerInfo> DetectHybridLayers(List<FileMetadata> files, Language? backendLanguage, Language? frontendLanguage)
     {
         var layers = new Dictionary<string, LayerInfo>();
-
         var backendExtensions = backendLanguage.HasValue
             ? LanguageSettings.ForLanguage(backendLanguage.Value).FileExtensions
             : new[] { ".cs" };
         var frontendExtensions = frontendLanguage.HasValue
             ? LanguageSettings.ForLanguage(frontendLanguage.Value).FileExtensions
             : new[] { ".js", ".html", ".css" };
-
         var backendFiles = new List<FileMetadata>();
         var frontendFiles = new List<FileMetadata>();
         var configFiles = new List<FileMetadata>();
-
         foreach (var file in files)
         {
             var ext = Path.GetExtension(file.RelativePath).ToLowerInvariant();
@@ -62,21 +57,18 @@ public static class LayerDetector
             Files = backendFiles,
             Description = "Серверная логика, API, бизнес-слой"
         };
-
         layers["Frontend"] = new LayerInfo
         {
             Name = "Frontend",
             Files = frontendFiles,
             Description = "Пользовательский интерфейс, клиентские скрипты"
         };
-
         layers["Configuration"] = new LayerInfo
         {
             Name = "Configuration",
             Files = configFiles,
             Description = "Конфигурационные файлы, настройки"
         };
-
         return layers;
     }
 
@@ -84,7 +76,6 @@ public static class LayerDetector
     public static Dictionary<string, LayerInfo> DetectDotNetLayers(List<FileMetadata> files)
     {
         var layers = new Dictionary<string, LayerInfo>();
-
         foreach (var file in files)
         {
             var normalizedPath = NormalizePath(file.RelativePath).ToUpperInvariant();
@@ -124,7 +115,6 @@ public static class LayerDetector
     public static Dictionary<string, LayerInfo> DetectWebAppLayers(List<FileMetadata> files)
     {
         var layers = new Dictionary<string, LayerInfo>();
-
         foreach (var file in files)
         {
             var normalizedPath = NormalizePath(file.RelativePath).ToUpperInvariant();
@@ -161,7 +151,6 @@ public static class LayerDetector
     public static Dictionary<string, LayerInfo> DetectPythonLayers(List<FileMetadata> files)
     {
         var layers = new Dictionary<string, LayerInfo>();
-
         foreach (var file in files)
         {
             var normalizedPath = NormalizePath(file.RelativePath).ToLowerInvariant();
@@ -202,7 +191,6 @@ public static class LayerDetector
     }
 
     #region Helper Methods
-
     private static void AddToLayer(Dictionary<string, LayerInfo> layers, string name, FileMetadata file)
     {
         if (!layers.ContainsKey(name))

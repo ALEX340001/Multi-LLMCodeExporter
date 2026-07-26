@@ -1,11 +1,10 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  *
  * SPDX-License-Identifier: MPL-2.0
  */
-
 using LLMCodeExporter.Core.Interfaces;
 using LLMCodeExporter.Core.Models;
 using System.Text.RegularExpressions;
@@ -14,16 +13,13 @@ using System.IO;
 using System.Linq;
 using LLMCodeExporter.Infrastructure.Utils;
 using LLMCodeExporter.Infrastructure.Utils.Architecture; 
-
 namespace LLMCodeExporter.Infrastructure.Services;
-
 /// <summary>
 /// Анализатор гибридных проектов, поддерживающий динамический выбор языка бекенда и фронтенда.
 /// </summary>
 public class HybridProjectAnalyzer : UniversalProjectAnalyzer
 {
     private readonly ExportSettings _settings;
-
     public HybridProjectAnalyzer(IExportSettings settings) : base(settings)
     {
         if (settings is ExportSettings exportSettings)
@@ -52,11 +48,9 @@ public class HybridProjectAnalyzer : UniversalProjectAnalyzer
             metadata.FrontendLanguage = _settings.FrontendLanguage;
         }
         EnrichWithLayerCounts(projectInfo);
-
         // Добавляем архитектуру и интеграцию (база уже сделала, но переопределим для гарантии)
         projectInfo.Metadata.Architecture = ArchitectureInfoBuilder.Build(projectInfo, _settings.ProjectType);
         projectInfo.Metadata.IntegrationPoints = IntegrationAnalyzer.Analyze(projectInfo.Files, _settings);
-
         return projectInfo;
     }
 
@@ -67,7 +61,6 @@ public class HybridProjectAnalyzer : UniversalProjectAnalyzer
         var backend = new List<FileMetadata>();
         var frontend = new List<FileMetadata>();
         var config = new List<FileMetadata>();
-
         foreach (var file in files)
         {
             var ext = Path.GetExtension(file.RelativePath).ToLowerInvariant();
@@ -96,7 +89,6 @@ public class HybridProjectAnalyzer : UniversalProjectAnalyzer
         var backendSettings = LanguageSettings.ForLanguage(_settings.BackendLanguage);
         var frontendSettings = LanguageSettings.ForLanguage(_settings.FrontendLanguage);
         var allPackageFiles = backendSettings.PackageFiles.Union(frontendSettings.PackageFiles).Distinct().ToList();
-
         foreach (var packageFileName in allPackageFiles)
         {
             foreach (var file in files.Where(f => f.RelativePath.EndsWith(packageFileName, StringComparison.OrdinalIgnoreCase)))
@@ -199,13 +191,11 @@ public class HybridProjectAnalyzer : UniversalProjectAnalyzer
                 deps.Add($"Go: {dep}");
     }
     #endregion
-
     private void EnrichWithLayerCounts(ProjectInfo projectInfo)
     {
         if (projectInfo.Metadata is not ExportMetadata metadata) return;
         var backendExtensions = LanguageSettings.ForLanguage(_settings.BackendLanguage).FileExtensions;
         var frontendExtensions = LanguageSettings.ForLanguage(_settings.FrontendLanguage).FileExtensions;
-
         metadata.BackendFilesCount = projectInfo.Files.Count(f =>
             backendExtensions.Contains(Path.GetExtension(f.RelativePath).ToLowerInvariant()));
         metadata.FrontendFilesCount = projectInfo.Files.Count(f =>

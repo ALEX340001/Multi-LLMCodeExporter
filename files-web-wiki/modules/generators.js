@@ -1,4 +1,4 @@
-// js/modules/generators.js
+﻿// js/modules/generators.js
 
 import {
     elRunSh, elProject, elMode, elFormat,

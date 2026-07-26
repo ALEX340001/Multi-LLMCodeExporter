@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,7 +6,6 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 namespace LLMCodeExporter.Infrastructure.Formatters;
-
 using Core.Interfaces;
 using Core.Models;
 using LLMCodeExporter.Infrastructure.Utils;
@@ -14,11 +13,9 @@ using LLMCodeExporter.Infrastructure.Utils.Architecture;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 public class MarkdownFormatter : IOutputFormatter
 {
     private readonly ExportSettings _settings;
-
     public MarkdownFormatter(ExportSettings settings)
     {
         _settings = settings;
@@ -27,7 +24,6 @@ public class MarkdownFormatter : IOutputFormatter
     public string FormatHeader(ProjectInfo projectInfo)
     {
         var sb = new StringBuilder();
-
         sb.AppendLine("# 🚀 Code Export для LLM");
         sb.AppendLine();
         sb.AppendLine($"**Проект:** `{projectInfo.ProjectName}`");
@@ -39,7 +35,6 @@ public class MarkdownFormatter : IOutputFormatter
         sb.AppendLine();
         sb.AppendLine("---");
         sb.AppendLine();
-
         // Quick Links
         var quickLinksSettings = new ExportSettings
         {
@@ -48,15 +43,12 @@ public class MarkdownFormatter : IOutputFormatter
         };
         sb.Append(NavigationGenerator.GenerateQuickLinks(projectInfo.Files, quickLinksSettings));
         sb.AppendLine();
-
         // Architecture Overview
         sb.Append(ArchitectureAnalyzer.GenerateArchitectureOverview(projectInfo, _settings.ProjectType));
         sb.AppendLine();
-
         // Dependency Graph
         sb.Append(DependencyAnalyzer.GenerateDependencyGraph(projectInfo.Files));
         sb.AppendLine();
-
         // Structure
         sb.AppendLine("## 📁 Структура проекта");
         sb.AppendLine();
@@ -68,9 +60,7 @@ public class MarkdownFormatter : IOutputFormatter
         sb.Append(ProjectStructureBuilder.BuildStatisticsByFolder(projectInfo.ProjectPath, projectInfo.Files));
         sb.AppendLine("---");
         sb.AppendLine();
-
         // === НОВЫЕ СЕКЦИИ (ВСЁ ВНУТРИ МЕТОДА) ===
-
         // 1. Архитектурная диаграмма слоёв
         var archDiagram = ArchitectureDiagramGenerator.GenerateLayerDiagram(
             projectInfo.Metadata.Architecture,
@@ -78,7 +68,6 @@ public class MarkdownFormatter : IOutputFormatter
         );
         if (!string.IsNullOrEmpty(archDiagram))
             sb.Append(archDiagram);
-
         // 2. Интеграция между слоями (таблица)
         if (projectInfo.Metadata.IntegrationPoints.Any())
         {
@@ -99,7 +88,6 @@ public class MarkdownFormatter : IOutputFormatter
         );
         if (!string.IsNullOrEmpty(integrationDiagram))
             sb.Append(integrationDiagram);
-
         // 4. Нарушения архитектурных правил
         if (projectInfo.Metadata.DependencyViolations.Any())
         {
@@ -141,7 +129,6 @@ public class MarkdownFormatter : IOutputFormatter
             sb.AppendLine($"| Максимальная длина метода | {metrics.MaxMethodLength} строк |");
             sb.AppendLine($"| Индекс поддерживаемости | {metrics.MaintainabilityIndex:F1} |");
             sb.AppendLine();
-
             if (metrics.ByLayer.Any())
             {
                 sb.AppendLine("### По слоям");
@@ -202,7 +189,6 @@ public class MarkdownFormatter : IOutputFormatter
     {
         var sb = new StringBuilder();
         var metadata = projectInfo.Metadata;
-
         sb.AppendLine();
         sb.AppendLine(new string('─', 80));
         sb.AppendLine();

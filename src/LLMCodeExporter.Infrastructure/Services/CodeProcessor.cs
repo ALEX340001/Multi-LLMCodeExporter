@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,7 +6,6 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 ﻿namespace LLMCodeExporter.Infrastructure.Services;
-
 using System.Text;
 using System.Text.RegularExpressions;
 using Core.Interfaces;
@@ -18,10 +17,8 @@ public class CodeProcessor : ICodeProcessor
     {
         if (settings.RemoveComments)
             code = RemoveComments(code);
-
         if (settings.RemoveEmptyLines)
             code = RemoveEmptyLines(code);
-
         return code.Trim();
     }
 
@@ -29,16 +26,13 @@ public class CodeProcessor : ICodeProcessor
     {
         if (string.IsNullOrEmpty(code))
             return code;
-
         var result = new StringBuilder();
         var lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         bool inMultiLineComment = false;
-
         foreach (var line in lines)
         {
             var trimmedLine = line.TrimStart();
             var processedLine = line;
-
             // Пропускаем XML-документацию (///, но НЕ обычные комментарии //)
             if (trimmedLine.StartsWith("///"))
             {
@@ -88,7 +82,6 @@ public class CodeProcessor : ICodeProcessor
                 var beforeComment = processedLine.Substring(0, commentIndex);
                 var quoteCount = beforeComment.Count(c => c == '"' &&
                     (beforeComment.IndexOf(c) == 0 || beforeComment[beforeComment.IndexOf(c) - 1] != '\\'));
-
                 // Если чётное количество кавычек - комментарий снаружи строки
                 if (quoteCount % 2 == 0)
                 {
@@ -110,15 +103,12 @@ public class CodeProcessor : ICodeProcessor
     {
         if (string.IsNullOrEmpty(code))
             return code;
-
         var lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         var nonEmptyLines = new List<string>();
-
         for (int i = 0; i < lines.Length; i++)
         {
             var line = lines[i];
             var trimmed = line.Trim();
-
             // ИСПРАВЛЕНО: Сохраняем строки которые не полностью пустые
             // НЕ трогаем синтаксис - сохраняем скобки, точки с запятой, пробелы
             if (!string.IsNullOrWhiteSpace(trimmed))

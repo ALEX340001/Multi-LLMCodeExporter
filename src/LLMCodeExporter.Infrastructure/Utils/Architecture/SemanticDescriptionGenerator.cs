@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -9,15 +9,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LLMCodeExporter.Core.Models;
-
 namespace LLMCodeExporter.Infrastructure.Utils.Architecture;
-
 public static class SemanticDescriptionGenerator
 {
     public static string Generate(ArchitectureInfo architecture, List<IntegrationPoint> integrations, ProjectType projectType)
     {
         var sb = new StringBuilder();
-
         // Тип проекта
         sb.Append("Проект представляет собой ");
         if (projectType == ProjectType.WebApp)
@@ -32,14 +29,11 @@ public static class SemanticDescriptionGenerator
             sb.Append("JavaScript/TypeScript-приложение");
         else
             sb.Append("программный проект");
-
         // Архитектурный стиль
         if (!string.IsNullOrEmpty(architecture.ArchitectureStyle))
             sb.Append($" с архитектурой {architecture.ArchitectureStyle}.");
-
         sb.AppendLine();
         sb.AppendLine();
-
         // Слои
         if (architecture.Layers.Any())
         {
@@ -49,7 +43,6 @@ public static class SemanticDescriptionGenerator
                 sb.Append($"- **{layer.Name}** ({layer.FileCount} файлов)");
                 if (!string.IsNullOrEmpty(layer.Description))
                     sb.Append($" – {layer.Description}");
-
                 // Покажем несколько ключевых файлов для понимания
                 if (layer.KeyFiles.Any())
                 {
@@ -100,15 +93,12 @@ public static class SemanticDescriptionGenerator
             hints.Add("пользовательский интерфейс реализован в UI");
         if (architecture.Layers.Any(l => l.Name == "Controllers"))
             hints.Add("API-контроллеры находятся в Controllers");
-
         if (!hints.Any())
             sb.Append("слои чётко разделены по функциональному признаку.");
         else
             sb.Append(string.Join(", ", hints));
-
         sb.AppendLine();
         sb.AppendLine("При ответах учитывай эти зависимости и предлагай решения, соответствующие архитектуре.");
-
         return sb.ToString();
     }
 }

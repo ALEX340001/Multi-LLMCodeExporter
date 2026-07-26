@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -8,7 +8,6 @@
 namespace LLMCodeExporter.Infrastructure.Utils;
 using Core.Models;
 using System.Text;
-
 /// <summary>
 /// Генератор навигационных ссылок для быстрого перемещения по коду
 /// </summary>
@@ -21,11 +20,9 @@ public static class NavigationGenerator
     {
         if (!settings.GenerateQuickLinks || !files.Any())
             return string.Empty;
-
         var sb = new StringBuilder();
         sb.AppendLine("## 🧭 Quick Links");
         sb.AppendLine();
-
         // Entry Points с якорями
         var entryPoints = FindEntryPoints(files, settings.EntryPoints);
         if (entryPoints.Any())

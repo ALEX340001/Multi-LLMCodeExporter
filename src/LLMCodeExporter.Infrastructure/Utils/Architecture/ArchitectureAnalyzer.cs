@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -11,9 +11,7 @@ using System.Text;
 using LLMCodeExporter.Core.Models;
 using LLMCodeExporter.Infrastructure.Utils.Architecture.Formatters;
 using LLMCodeExporter.Infrastructure.Utils.Architecture.Models;
-
 namespace LLMCodeExporter.Infrastructure.Utils.Architecture;
-
 /// <summary>
 /// Главный анализатор архитектуры — orchestrator для всех форматтеров
 /// </summary>
@@ -26,7 +24,6 @@ public static class ArchitectureAnalyzer
         new DotNetLayerFormatter(),
         new PythonLayerFormatter()
     };
-
     /// <summary>
     /// Генерирует краткое описание архитектуры проекта на основе структуры файлов.
     /// </summary>
@@ -35,7 +32,6 @@ public static class ArchitectureAnalyzer
         var sb = new StringBuilder();
         sb.AppendLine("## 🏗️ Architecture Overview");
         sb.AppendLine();
-
         var context = BuildContext(projectInfo, projectType);
         var formatter = FindFormatter(context);
         if (formatter != null)
@@ -68,7 +64,6 @@ public static class ArchitectureAnalyzer
             ProjectInfo = projectInfo,
             ProjectType = projectType
         };
-
         if (projectType == ProjectType.Hybrid)
         {
             var metadata = projectInfo.Metadata;

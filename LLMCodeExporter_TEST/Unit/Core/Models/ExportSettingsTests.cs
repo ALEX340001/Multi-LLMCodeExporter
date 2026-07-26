@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -10,7 +10,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
 namespace LLMCodeExporter.Tests.Unit.Core.Models
 {
     [TestClass]
@@ -21,10 +20,8 @@ namespace LLMCodeExporter.Tests.Unit.Core.Models
         {
             // Arrange
             var settings = new ExportSettings();
-
             // Act
             settings.ApplyBackendOnlyPreset();
-
             // Assert
             var excludePatterns = settings.ExcludePatterns.ToList();
             Assert.IsTrue(excludePatterns.Contains("*.Designer.cs"));
@@ -39,10 +36,8 @@ namespace LLMCodeExporter.Tests.Unit.Core.Models
         {
             // Arrange
             var settings = new ExportSettings();
-
             // Act
             settings.ApplyDomainServicesPreset();
-
             // Assert
             var includePatterns = settings.IncludeOnlyPatterns.ToList();
             Assert.IsTrue(includePatterns.Contains("Domain"));
@@ -57,10 +52,8 @@ namespace LLMCodeExporter.Tests.Unit.Core.Models
         {
             // Arrange
             var settings = new ExportSettings();
-
             // Act
             settings.ApplyCompactAggressivePreset();
-
             // Assert
             Assert.AreEqual(ExportMode.Compact, settings.Mode);
             Assert.IsTrue(settings.RemoveComments);
@@ -74,12 +67,10 @@ namespace LLMCodeExporter.Tests.Unit.Core.Models
         {
             // Arrange & Act
             string path = ExportSettings.GetDefaultOutputDirectory();
-
             // Assert
             Assert.IsFalse(string.IsNullOrEmpty(path), "Path must not be null or empty");
             Assert.IsTrue(path.Contains("LLMCodeExporter"), "Must contain project name");
             Assert.IsTrue(path.Contains("Exports"), "Must contain Exports folder");
-
             // Проверяем только структуру пути, не существование директории
             Assert.IsTrue(!string.IsNullOrEmpty(Path.GetDirectoryName(path)));
         }

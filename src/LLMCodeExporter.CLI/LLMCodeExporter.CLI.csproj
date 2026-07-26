@@ -10,6 +10,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\LLMCodeExporter.Core\LLMCodeExporter.Core.csproj" />
 		<ProjectReference Include="..\LLMCodeExporter.Infrastructure\LLMCodeExporter.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\LLMCode_Importer\LLMCode_Importer.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,7 +6,6 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 ﻿namespace LLMCodeExporter.Core.Models;
-
 /// <summary>
 /// Статистика проекта
 /// </summary>
@@ -16,22 +15,18 @@ public class ProjectStatistics
     /// Общее количество файлов
     /// </summary>
     public int TotalFiles { get; set; }
-
     /// <summary>
     /// Количество включенных файлов
     /// </summary>
     public int IncludedFiles { get; set; }
-
     /// <summary>
     /// Количество исключенных файлов
     /// </summary>
     public int ExcludedFiles => TotalFiles - IncludedFiles;
-
     /// <summary>
     /// Общий размер файлов в байтах
     /// </summary>
     public long TotalSizeBytes { get; set; }
-
     /// <summary>
     /// Размер файлов в удобочитаемом формате
     /// </summary>
@@ -55,17 +50,14 @@ public class ProjectStatistics
     /// Оценка количества токенов
     /// </summary>
     public int EstimatedTokens { get; set; }
-
     /// <summary>
     /// Тип проекта
     /// </summary>
     public ProjectType ProjectType { get; set; }
-
     /// <summary>
     /// Список расширений файлов с количеством
     /// </summary>
     public Dictionary<string, int> FileExtensions { get; set; } = new();
-
     /// <summary>
     /// Список зависимостей
     /// </summary>

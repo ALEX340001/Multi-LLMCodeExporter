@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -11,18 +11,14 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using LLMCodeExporter.Core.Models;
-
 namespace LLMCodeExporter.Infrastructure.Utils.Architecture;
-
 public static class IntegrationAnalyzer
 {
     public static List<IntegrationPoint> Analyze(List<FileMetadata> files, ExportSettings settings)
     {
         var points = new List<IntegrationPoint>();
-
         if (settings.ProjectType != ProjectType.Hybrid)
             return points;
-
         // 1. Backend → Frontend: IJSRuntime в C#
         foreach (var file in files.Where(f => f.RelativePath.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)))
         {

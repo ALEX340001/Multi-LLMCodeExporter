@@ -1,5 +1,4 @@
-
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -11,9 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LLMCodeExporter.Core.Models;
-
 namespace LLMCodeExporter.Infrastructure.Utils.Architecture;
-
 /// <summary>
 /// Детектор паттернов проектирования
 /// </summary>
@@ -41,11 +38,9 @@ public static class PatternDetector
                    files.Any(f => f.RelativePath.IndexOf("CONTROLLER", StringComparison.OrdinalIgnoreCase) >= 0);
         })
     };
-
     public static List<string> DetectPatterns(List<FileMetadata> files)
     {
         var detected = new List<string>();
-
         foreach (var pattern in _patterns)
         {
             if (pattern.Detect(files))
@@ -60,7 +55,6 @@ public static class PatternDetector
         public string Name { get; }
         private readonly string[] _keywords;
         private readonly Func<List<FileMetadata>, bool>? _customDetector;
-
         public PatternDefinition(string name, string[] keywords, Func<List<FileMetadata>, bool>? customDetector = null)
         {
             Name = name;
@@ -72,12 +66,9 @@ public static class PatternDetector
         {
             if (_customDetector != null)
                 return _customDetector(files);
-
             var normalizedPaths = files.Select(f => f.RelativePath.Replace('\\', '/').ToUpperInvariant()).ToList();
-
             if (_keywords.Length == 1)
                 return normalizedPaths.Any(p => p.Contains(_keywords[0]));
-
             // Для MVC — все ключевые слова должны присутствовать
             return _keywords.All(keyword => normalizedPaths.Any(p => p.Contains(keyword)));
         }

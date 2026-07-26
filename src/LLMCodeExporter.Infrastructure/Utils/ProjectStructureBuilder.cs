@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,9 +6,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 namespace LLMCodeExporter.Infrastructure.Utils;
-
 using System.Text;
-
 public static class ProjectStructureBuilder
 {
     /// <summary>
@@ -28,9 +26,7 @@ public static class ProjectStructureBuilder
             .GroupBy(f => f.Directory)
             .OrderBy(g => g.Key)
             .ToList();
-
         tree.AppendLine($"📁 {Path.GetFileName(projectPath)}/");
-
         var rootFiles = filesByDirectory.FirstOrDefault(g => string.IsNullOrEmpty(g.Key));
         if (rootFiles != null)
         {
@@ -43,14 +39,12 @@ public static class ProjectStructureBuilder
         var directories = filesByDirectory
             .Where(g => !string.IsNullOrEmpty(g.Key))
             .ToList();
-
         foreach (var dir in directories)
         {
             string[] pathParts = dir.Key.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             string indent = new string('│', pathParts.Length - 1);
             string connector = "├──";
             tree.AppendLine($"{indent}{connector} 📂 {pathParts.Last()}/");
-
             foreach (var file in dir.OrderBy(f => f.FileName))
             {
                 string fileIndent = new string('│', pathParts.Length);
@@ -71,7 +65,6 @@ public static class ProjectStructureBuilder
             .Select(f => Path.GetRelativePath(projectPath, f))
             .OrderBy(p => p)
             .ToList();
-
         tree.AppendLine($"📁 {Path.GetFileName(projectPath)}/");
         foreach (var path in relativePaths)
         {
@@ -101,7 +94,6 @@ public static class ProjectStructureBuilder
             })
             .OrderByDescending(s => s.EstimatedTokens)
             .ToList();
-
         sb.AppendLine("## 📊 Статистика по папкам\n");
         sb.AppendLine("| Папка | Файлов | Размер | ~Токенов |");
         sb.AppendLine("|-------|--------|--------|----------|");
@@ -111,7 +103,6 @@ public static class ProjectStructureBuilder
             sb.AppendLine($"| {folderName} | {stat.FileCount} | {FormatSize(stat.TotalSize)} | ~{stat.EstimatedTokens:N0} |");
         }
         sb.AppendLine();
-
         return sb.ToString();
     }
 
@@ -141,26 +132,21 @@ public static class ProjectStructureBuilder
             IsDirectory = true,
             Children = new List<TreeNode>()
         };
-
         var filesByPath = filePaths
             .Select(f => Path.GetRelativePath(projectPath, f))
             .OrderBy(p => p)
             .ToList();
-
         var directoryNodes = new Dictionary<string, TreeNode>();
-
         foreach (var relativePath in filesByPath)
         {
             var parts = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             TreeNode currentNode = root;
             string currentPath = "";
-
             for (int i = 0; i < parts.Length - 1; i++)
             {
                 currentPath = string.IsNullOrEmpty(currentPath)
                     ? parts[i]
                     : Path.Combine(currentPath, parts[i]);
-
                 if (!directoryNodes.ContainsKey(currentPath))
                 {
                     var dirNode = new TreeNode
@@ -193,7 +179,6 @@ public static class ProjectStructureBuilder
     {
         string icon = node.IsDirectory ? "📂" : "📄";
         string connector = isLast ? "└──" : "├──";
-
         if (indent == "")
         {
             sb.AppendLine($"📁 {node.Name}/");

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -9,7 +9,6 @@ using LLMCodeExporter.CLI.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
-
 namespace LLMCodeExporter.Tests.Unit.CLI.UI
 {
     [TestClass]
@@ -17,7 +16,6 @@ namespace LLMCodeExporter.Tests.Unit.CLI.UI
     {
         private StringWriter? _consoleOutput;
         private StringReader? _consoleInput;
-
         [TestInitialize]
         public void Setup()
         {
@@ -44,10 +42,8 @@ namespace LLMCodeExporter.Tests.Unit.CLI.UI
             _consoleInput = new StringReader("Test Input\n");
             Console.SetIn(_consoleInput);
             Console.WriteLine("Тест: ReadLine_ValidInput - ожидается ввод 'Test Input'");
-
             // Act
             string result = InputHelper.ReadLine("Введите что-нибудь:")!;
-
             // Assert
             Assert.AreEqual("Test Input", result);
             Console.WriteLine($"Результат: '{result}' — успешно");
@@ -60,10 +56,8 @@ namespace LLMCodeExporter.Tests.Unit.CLI.UI
             _consoleInput = new StringReader("\n");
             Console.SetIn(_consoleInput);
             Console.WriteLine("Тест: ReadYesNo_DefaultYes - ожидается Enter (значение по умолчанию true)");
-
             // Act
             bool result = InputHelper.ReadYesNo("Продолжить?", defaultValue: true);
-
             // Assert
             Assert.IsTrue(result);
             Console.WriteLine($"Результат: {result} — успешно");
@@ -76,10 +70,8 @@ namespace LLMCodeExporter.Tests.Unit.CLI.UI
             _consoleInput = new StringReader("2\n");
             Console.SetIn(_consoleInput);
             Console.WriteLine("Тест: ReadChoice_ValidChoice - ожидается выбор '2'");
-
             // Act
             int result = InputHelper.ReadChoice("Выберите:", 1, 5, 1);
-
             // Assert
             Assert.AreEqual(2, result);
             Console.WriteLine($"Результат: {result} — успешно");
@@ -92,10 +84,8 @@ namespace LLMCodeExporter.Tests.Unit.CLI.UI
             _consoleInput = new StringReader("\n");
             Console.SetIn(_consoleInput);
             Console.WriteLine("Тест: ReadLine_EmptyInput_WithAllowEmpty - ожидается пустая строка (разрешено)");
-
             // Act
             string result = InputHelper.ReadLine("Введите что-нибудь (может быть пустым):", maxAttempts: 1, allowEmpty: true)!;
-
             // Assert
             Assert.AreEqual(string.Empty, result);
             Console.WriteLine($"Результат: '{result}' — успешно");
@@ -108,10 +98,8 @@ namespace LLMCodeExporter.Tests.Unit.CLI.UI
             _consoleInput = new StringReader("\n");
             Console.SetIn(_consoleInput);
             Console.WriteLine("Тест: ReadLine_EmptyInput_WithoutAllowEmpty - ожидается null после превышения попыток");
-
             // Act
             string? result = InputHelper.ReadLine("Введите что-нибудь (не может быть пустым):", maxAttempts: 2, allowEmpty: false);
-
             // Assert
             Assert.IsNull(result);
             Console.WriteLine($"Результат: null — успешно");

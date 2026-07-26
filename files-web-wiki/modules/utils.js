@@ -1,4 +1,4 @@
-// modules/utils.js
+﻿// modules/utils.js
 
 /**
  * Debounce — ограничивает частоту вызова функции.

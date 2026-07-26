@@ -1,4 +1,4 @@
-// modules/providers.js
+﻿// modules/providers.js
 
 import {
     elRunSh, elProject, elMode, elFormat, elPreset,

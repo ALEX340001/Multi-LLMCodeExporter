@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,7 +6,6 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 namespace LLMCodeExporter.Infrastructure.Utils;
-
 using Core.Models;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-
 public static class DependencyAnalyzer
 {
     /// <summary>
@@ -24,7 +22,6 @@ public static class DependencyAnalyzer
     {
         if (files == null || !files.Any())
             return string.Empty;
-
         var sb = new StringBuilder();
         sb.AppendLine("## 🔗 Граф зависимостей");
         sb.AppendLine();
@@ -33,12 +30,10 @@ public static class DependencyAnalyzer
         sb.AppendLine();
         sb.AppendLine("```mermaid");
         sb.AppendLine("graph TD");
-        
         // Группировка по папкам
         var groups = files.GroupBy(f => Path.GetDirectoryName(f.RelativePath) ?? "Root")
                           .Select(g => new { Folder = g.Key, Files = g.ToList() })
                           .ToList();
-
         foreach (var group in groups)
         {
             string nodeId = "Folder_" + group.Folder.Replace("\\", "_").Replace("/", "_");
@@ -78,10 +73,8 @@ public static class DependencyAnalyzer
             sb.AppendLine($"- {string.Join(", ", entryPoints)}");
         }
         sb.AppendLine();
-
         sb.AppendLine("---");
         sb.AppendLine();
-
         return sb.ToString();
     }
 
@@ -92,20 +85,17 @@ public static class DependencyAnalyzer
             .Select(f => Path.GetFileNameWithoutExtension(f.RelativePath))
             .Where(name => !string.IsNullOrEmpty(name))
             .ToHashSet();
-
         foreach (var file in files)
         {
             try
             {
                 string content = File.ReadAllText(file.FullPath);
                 string fromClass = Path.GetFileNameWithoutExtension(file.RelativePath);
-
                 // Ищем использование других классов
                 foreach (var className in classNames)
                 {
                     if (className == fromClass)
                         continue;
-
                     // Паттерны использования: new ClassName(), ClassName variable, ClassName.Method()
                     var patterns = new[]
                     {
@@ -116,7 +106,6 @@ public static class DependencyAnalyzer
                         $@"<{className}>",                       // List<ClassName>
                         $@"\({className}\s+\w+\)"               // (ClassName param)
                     };
-
                     if (patterns.Any(pattern => Regex.IsMatch(content, pattern)))
                     {
                         dependencies.Add(new Dependency
@@ -139,7 +128,6 @@ public static class DependencyAnalyzer
     private static Dictionary<string, int> CalculateNodeImportance(List<Dependency> dependencies)
     {
         var importance = new Dictionary<string, int>();
-
         foreach (var dep in dependencies)
         {
             // Узел важен если он имеет много входящих И исходящих связей
@@ -147,7 +135,6 @@ public static class DependencyAnalyzer
                 importance[dep.From] = 0;
             if (!importance.ContainsKey(dep.To))
                 importance[dep.To] = 0;
-
             importance[dep.From] += 1;  // Исходящая связь
             importance[dep.To] += 2;    // Входящая связь (важнее)
         }
@@ -169,7 +156,6 @@ public static class DependencyAnalyzer
             return "доступ к данным";
         if (nodeName.Contains("Manager"))
             return "управляющий компонент";
-
         return "компонент системы";
     }
 

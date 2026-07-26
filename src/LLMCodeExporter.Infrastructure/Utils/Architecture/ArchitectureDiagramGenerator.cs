@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -8,15 +8,12 @@
 using System.Linq;
 using System.Text;
 using LLMCodeExporter.Core.Models;
-
 namespace LLMCodeExporter.Infrastructure.Utils.Architecture;
-
 public static class ArchitectureDiagramGenerator
 {
     public static string GenerateLayerDiagram(ArchitectureInfo architecture, ProjectType projectType)
     {
         if (!architecture.Layers.Any()) return string.Empty;
-
         var sb = new StringBuilder();
         sb.AppendLine("## 🧱 Архитектурная диаграмма");
         sb.AppendLine();
@@ -25,11 +22,9 @@ public static class ArchitectureDiagramGenerator
         sb.AppendLine();
         sb.AppendLine("```mermaid");
         sb.AppendLine("graph TD");
-
         var orderedLayers = architecture.Layers
             .OrderBy(l => GetLayerOrder(l.Name))
             .ToList();
-
         foreach (var layer in orderedLayers)
         {
             string nodeId = Sanitize(layer.Name);
@@ -49,7 +44,6 @@ public static class ArchitectureDiagramGenerator
         sb.AppendLine("    classDef app fill:#e8f5e9,stroke:#2e7d32;");
         sb.AppendLine("    classDef infra fill:#fff3e0,stroke:#e65100;");
         sb.AppendLine("    classDef ui fill:#fce4ec,stroke:#c62828;");
-
         foreach (var layer in orderedLayers)
         {
             string className = layer.Name switch

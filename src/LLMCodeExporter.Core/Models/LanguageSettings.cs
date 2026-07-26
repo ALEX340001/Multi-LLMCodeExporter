@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -7,9 +7,7 @@
  */
 using System;
 using System.Linq;
-
 namespace LLMCodeExporter.Core.Models;
-
 /// <summary>
 /// Настройки языка программирования
 /// </summary>
@@ -21,11 +19,9 @@ public class LanguageSettings
     public string CommentSyntax { get; set; } = "//";
     public bool HasPackageManager { get; set; } = false;
     public string[] PackageFiles { get; set; } = Array.Empty<string>();
-
     // ================================================================
     // СТАТИЧЕСКИЕ НАСТРОЙКИ ДЛЯ КАЖДОГО ЯЗЫКА
     // ================================================================
-
     public static LanguageSettings ForCSharp => new()
     {
         FileExtensions = new[] { ".cs", ".csproj", ".sln", ".config", ".json", ".cshtml", ".razor" },
@@ -35,7 +31,6 @@ public class LanguageSettings
         HasPackageManager = true,
         PackageFiles = new[] { ".csproj", ".sln" }
     };
-
     public static LanguageSettings ForPython => new()
     {
         FileExtensions = new[] { ".py", ".pyw", ".txt", ".json", ".yaml", ".yml", ".toml", ".cfg", ".ini" },
@@ -45,7 +40,6 @@ public class LanguageSettings
         HasPackageManager = true,
         PackageFiles = new[] { "requirements.txt", "pyproject.toml", "setup.py", "setup.cfg", "Pipfile" }
     };
-
     public static LanguageSettings ForJavaScript => new()
     {
         FileExtensions = new[] { ".js", ".jsx", ".json", ".mjs", ".cjs" },
@@ -55,7 +49,6 @@ public class LanguageSettings
         HasPackageManager = true,
         PackageFiles = new[] { "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml" }
     };
-
     public static LanguageSettings ForTypeScript => new()
     {
         FileExtensions = new[] { ".ts", ".tsx", ".js", ".jsx", ".json", ".mjs", ".cjs" },
@@ -65,7 +58,6 @@ public class LanguageSettings
         HasPackageManager = true,
         PackageFiles = new[] { "package.json", "package-lock.json", "tsconfig.json", "yarn.lock" }
     };
-
     public static LanguageSettings ForJava => new()
     {
         FileExtensions = new[] { ".java", ".jsp", ".xml", ".properties", ".gradle", ".kt" },
@@ -75,7 +67,6 @@ public class LanguageSettings
         HasPackageManager = true,
         PackageFiles = new[] { "pom.xml", "build.gradle", "settings.gradle" }
     };
-
     public static LanguageSettings ForGo => new()
     {
         FileExtensions = new[] { ".go", ".mod", ".sum", ".tmpl" },
@@ -85,7 +76,6 @@ public class LanguageSettings
         HasPackageManager = true,
         PackageFiles = new[] { "go.mod", "go.sum" }
     };
-
     public static LanguageSettings ForRuby => new()
     {
         FileExtensions = new[] { ".rb", ".erb", ".rake", ".gemspec", ".yml", ".yaml", ".gemfile" },
@@ -95,7 +85,6 @@ public class LanguageSettings
         HasPackageManager = true,
         PackageFiles = new[] { "Gemfile", "Gemfile.lock" }
     };
-
     public static LanguageSettings ForPHP => new()
     {
         FileExtensions = new[] { ".php", ".html", ".htm", ".css", ".js", ".json", ".xml" },
@@ -105,7 +94,6 @@ public class LanguageSettings
         HasPackageManager = true,
         PackageFiles = new[] { "composer.json", "composer.lock" }
     };
-
     public static LanguageSettings ForWebApp => new()
     {
         FileExtensions = new[] { ".js", ".jsx", ".ts", ".tsx", ".css", ".scss", ".sass", ".less", ".html", ".htm", ".json", ".xml", ".svg" },
@@ -115,7 +103,6 @@ public class LanguageSettings
         HasPackageManager = true,
         PackageFiles = new[] { "package.json", "package-lock.json", "yarn.lock" }
     };
-
     public static LanguageSettings ForGeneric => new()
     {
         FileExtensions = new[] { ".txt", ".md", ".json", ".xml", ".yaml", ".yml", ".cfg", ".ini", ".csv", ".log" },
@@ -125,7 +112,6 @@ public class LanguageSettings
         HasPackageManager = false,
         PackageFiles = Array.Empty<string>()
     };
-
     /// <summary>
     /// Возвращает настройки для указанного языка.
     /// </summary>
@@ -171,7 +157,6 @@ public class LanguageSettings
     // ================================================================
     // СТАРАЯ ВЕРСИЯ ForHybrid (для обратной совместимости)
     // ================================================================
-
     public static LanguageSettings ForHybrid => new()
     {
         FileExtensions = new[]

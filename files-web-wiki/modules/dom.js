@@ -1,4 +1,4 @@
-// modules/dom.js
+﻿// modules/dom.js
 
 import { CLI_HELP } from './config.js';
 

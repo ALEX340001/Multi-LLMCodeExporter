@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -9,7 +9,6 @@
 using LLMCodeExporter.Core.Models;
 using LLMCodeExporter.Infrastructure.Utils;
 namespace LLMCodeExporter.Infrastructure.Services;
-
 /// <summary>
 /// Универсальный оптимизатор кода
 /// </summary>
@@ -19,15 +18,12 @@ public class UniversalCodeOptimizer : ICodeOptimizer
     {
         if (string.IsNullOrEmpty(content))
             return content;
-
         var extension = Path.GetExtension(filePath).ToLower();
-
         // Базовая оптимизация - удаление лишних пробелов и пустых строк
         var lines = content.Split('\n')
             .Select(line => line.TrimEnd())
             .Where(line => !string.IsNullOrWhiteSpace(line) || settings.IncludeComments)
             .ToArray();
-
         // Дополнительная обработка в зависимости от типа файла
         if (settings.Minify)
         {
@@ -57,11 +53,9 @@ public class UniversalCodeOptimizer : ICodeOptimizer
     {
         // Простая минификация - удаление комментариев и лишних пробелов
         var result = new List<string>();
-
         foreach (var line in lines)
         {
             var trimmedLine = line.Trim();
-
             // Пропускаем однострочные комментарии (кроме важных директив)
             if (trimmedLine.StartsWith("//") &&
                 !trimmedLine.StartsWith("///") &&
@@ -73,7 +67,6 @@ public class UniversalCodeOptimizer : ICodeOptimizer
             // Пропускаем пустые строки
             if (string.IsNullOrWhiteSpace(trimmedLine))
                 continue;
-
             result.Add(trimmedLine);
         }
 

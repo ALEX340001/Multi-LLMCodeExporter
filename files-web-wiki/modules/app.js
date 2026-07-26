@@ -1,4 +1,4 @@
-// modules/app.js
+﻿// modules/app.js
 
 import {
     renderHelp, renderHistory, showToast,

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,9 +6,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 using LLMCodeExporter.Core.Interfaces;
-
 namespace LLMCodeExporter.Core.Models;
-
 public enum ExportMode
 {
     Compact,
@@ -35,7 +33,6 @@ public class ExportSettings : IExportSettings
     public string[] ExcludeFiles { get; set; } = Array.Empty<string>();
     public long MaxFileSize { get; set; } = 10 * 1024 * 1024; // 10 MB
     public int MaxTokens { get; set; } = 100000;
-
     // === Базовые настройки ===
     public bool RemoveEmptyLines { get; set; } = true;
     public bool RemoveComments { get; set; } = false;
@@ -43,11 +40,9 @@ public class ExportSettings : IExportSettings
     public ExportFormat Format { get; set; } = ExportFormat.Markdown;
     public string[] FileExtensions { get; set; } = new[] { "*.cs" };
     public string OutputDirectory { get; set; } = GetDefaultOutputDirectory();
-
     // === Новые настройки для гибридного режима ===
     public Language BackendLanguage { get; set; } = Language.CSharp;
     public Language FrontendLanguage { get; set; } = Language.JavaScript;
-
     public List<string> ExcludePatterns { get; set; } = new();
     public List<string> IncludeOnlyPatterns { get; set; } = new();
     public int MethodCollapseThreshold { get; set; } = 50;
@@ -58,17 +53,17 @@ public class ExportSettings : IExportSettings
     {
         "Program.cs", "Startup.cs", "ApplicationRunner.cs", "Main.cs"
     };
-
     // === Пресеты ===
-
-    public void ApplyPythonProjectPreset()
-    {
-        FileExtensions = new[] { "*.py", "*.md" };
-        FilterBuildFolders = true;
-        ExcludeFolders = Array.Empty<string>();
-        ExcludePatterns = new() { "*.pyc", "*.pyo", "*.pyd" };
-        Mode = ExportMode.Full;
-    }
+public void ApplyPythonProjectPreset()
+{
+    FileExtensions = new[] { "*.py", "*.md" };
+    FilterBuildFolders = true;
+    ExcludeFolders = Array.Empty<string>();
+    // Добавляем к существующим
+    if (ExcludePatterns == null) ExcludePatterns = new List<string>();
+    ExcludePatterns.AddRange(new[] { "*.pyc", "*.pyo", "*.pyd" });
+    Mode = ExportMode.Full;
+}
 
     public void ApplyWebAppPreset()
     {
@@ -123,7 +118,6 @@ public class ExportSettings : IExportSettings
         var backendSettings = LanguageSettings.ForLanguage(BackendLanguage);
         var frontendSettings = LanguageSettings.ForLanguage(FrontendLanguage);
         var combined = LanguageSettings.Combine(backendSettings, frontendSettings);
-
         // Преобразуем расширения в формат "*.ext"
         FileExtensions = combined.FileExtensions.Select(ext => $"*{ext}").ToArray();
         ExcludeFolders = combined.ExcludeFolders;

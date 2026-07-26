@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -11,9 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using LLMCodeExporter.Core.Models;
-
 namespace LLMCodeExporter.Infrastructure.Utils.Architecture;
-
 public static class AnnotationGenerator
 {
     /// <summary>
@@ -23,22 +21,17 @@ public static class AnnotationGenerator
     {
         var keyComponents = new List<KeyComponent>();
         var fileToLayer = BuildFileToLayerMap(architecture);
-
         foreach (var file in projectInfo.Files)
         {
             // Определяем слой
             string layer = fileToLayer.TryGetValue(file.RelativePath, out var l) ? l : "Other";
-
             // Извлекаем комментарий (если есть)
             string annotation = ExtractComment(file.FullPath);
-
             // Если комментария нет – генерируем на основе имени и слоя
             if (string.IsNullOrWhiteSpace(annotation))
                 annotation = GenerateFromNameAndLayer(Path.GetFileNameWithoutExtension(file.RelativePath), layer);
-
             // Сохраняем в FileMetadata
             file.Annotation = annotation;
-
             // Если файл является точкой входа или важным компонентом – добавляем в список ключевых
             if (IsKeyComponent(file, layer, entryPointNames))
             {
@@ -79,17 +72,14 @@ public static class AnnotationGenerator
             var summaryMatch = Regex.Match(content, @"///\s*<summary>\s*(.*?)\s*</summary>", RegexOptions.Singleline);
             if (summaryMatch.Success)
                 return summaryMatch.Groups[1].Value.Trim();
-
             // Python docstring """..."""
             var docMatch = Regex.Match(content, @"""""([^""]+)""""", RegexOptions.Singleline);
             if (docMatch.Success)
                 return docMatch.Groups[1].Value.Trim();
-
             // Альтернативный docstring с тройными кавычками
             var docMatch2 = Regex.Match(content, @"'''(.*?)'''", RegexOptions.Singleline);
             if (docMatch2.Success)
                 return docMatch2.Groups[1].Value.Trim();
-
             return string.Empty;
         }
         catch (Exception ex)
@@ -102,7 +92,6 @@ public static class AnnotationGenerator
     private static string GenerateFromNameAndLayer(string className, string layer)
     {
         if (string.IsNullOrEmpty(className)) return string.Empty;
-
         // Убираем суффиксы
         string baseName = className;
         var suffixes = new[] { "Service", "Repository", "Controller", "Handler", "Manager", "Helper", "Factory", "Builder", "Provider", "Mapper" };
@@ -128,7 +117,6 @@ public static class AnnotationGenerator
             "Frontend" => "фронтенд-компонент",
             _ => "компонент"
         };
-
         // Пытаемся сделать более осмысленно
         if (className.EndsWith("Service"))
             return $"Сервис для управления {baseName.ToLowerInvariant()}";
@@ -142,7 +130,6 @@ public static class AnnotationGenerator
             return $"Фабрика для создания {baseName.ToLowerInvariant()}";
         if (className.EndsWith("Manager"))
             return $"Менеджер для управления {baseName.ToLowerInvariant()}";
-
         return $"{role} {className}";
     }
 
@@ -151,21 +138,17 @@ public static class AnnotationGenerator
         // Точки входа
         if (entryPointNames.Contains(Path.GetFileName(file.RelativePath), StringComparer.OrdinalIgnoreCase))
             return true;
-
         // Файлы с большим размером или важные слои
         if (file.SizeInBytes > 20 * 1024) // >20KB
             return true;
-
         // Классы с характерными суффиксами
         var name = Path.GetFileNameWithoutExtension(file.RelativePath);
         var importantSuffixes = new[] { "Service", "Repository", "Controller", "Handler", "Manager", "Factory" };
         if (importantSuffixes.Any(s => name.EndsWith(s)))
             return true;
-
         // Если файл находится в корне слоя Application или Domain
         if (layer == "Application" || layer == "Domain")
             return true;
-
         return false;
     }
 

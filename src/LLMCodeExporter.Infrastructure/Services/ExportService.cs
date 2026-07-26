@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,16 +6,13 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 namespace LLMCodeExporter.Infrastructure.Services;
-
 using Core.Interfaces;
 using Core.Models;
 using LLMCodeExporter.Infrastructure.Utils;
 using System.Text;
-
 public class ExportService : IExportService
 {
     private readonly ICodeProcessor _codeProcessor;
-
     public ExportService(ICodeProcessor codeProcessor)
     {
         _codeProcessor = codeProcessor;
@@ -31,11 +28,9 @@ public class ExportService : IExportService
     var result = new ExportResult { ProjectInfo = projectInfo };
     Logger.Log($"Начало экспорта проекта '{projectInfo.ProjectName}' в режиме {settings.Mode}");
     Logger.Log($"Файлов для обработки: {projectInfo.TotalFiles}");
-
     try
     {
         var optimizer = new CodeOptimizer(settings);
-
         // ========== ОБРАБОТКА JSON ==========
         if (settings.Format == ExportFormat.Json)
         {
@@ -55,24 +50,20 @@ public class ExportService : IExportService
         IOutputFormatter formatter = settings.Format == ExportFormat.Markdown || settings.Format == ExportFormat.MarkdownWithJson
             ? new Formatters.MarkdownFormatter(settings)
             : new Formatters.PlainTextFormatter();
-
         Logger.Log($"Выбран формат: {settings.Format}");
         string extension = settings.Format == ExportFormat.Markdown || settings.Format == ExportFormat.MarkdownWithJson ? "md" : "txt";
         string modePrefix = settings.Mode != ExportMode.Full ? $"_{settings.Mode.ToString().ToLower()}" : "";
         string fileName = $"code_export_{projectInfo.ProjectName}{modePrefix}_{DateTime.Now:yyyyMMdd_HHmmss}.{extension}";
         string outputPath = Path.Combine(settings.OutputDirectory, fileName);
         Logger.Log($"Целевой файл: {outputPath}");
-
         long originalSize = projectInfo.TotalCharacters;
         long optimizedSize = 0;
-
         projectInfo.Metadata.ProjectName = projectInfo.ProjectName;
         projectInfo.Metadata.Mode = settings.Mode;
         projectInfo.Metadata.TotalFiles = projectInfo.TotalScannedFiles;
         projectInfo.Metadata.IncludedFiles = projectInfo.TotalFiles;
         projectInfo.Metadata.TotalSize = originalSize;
         projectInfo.Metadata.OriginalEstimatedTokens = (int)(originalSize / 4);
-
         if (settings.ExcludePatterns.Any())
         {
             var uniqueExcludes = settings.ExcludePatterns.Distinct().ToList();
@@ -92,11 +83,9 @@ public class ExportService : IExportService
             _ => (int)(originalSize / 4)
         };
         projectInfo.Metadata.RecommendedContextWindow = GetRecommendedWindow(projectInfo.Metadata.EstimatedTokens);
-
         using (var writer = new StreamWriter(outputPath, false, new UTF8Encoding(true)))
         {
             await writer.WriteAsync(formatter.FormatHeader(projectInfo));
-
             int processedFiles = 0;
             foreach (var file in projectInfo.Files)
             {
@@ -122,7 +111,6 @@ public class ExportService : IExportService
             }
 
             await writer.WriteAsync(formatter.FormatFooter(projectInfo));
-
             // ========== ДОБАВЛЯЕМ JSON-БЛОК ДЛЯ MarkdownWithJson ==========
             if (settings.Format == ExportFormat.MarkdownWithJson)
             {
@@ -144,7 +132,6 @@ public class ExportService : IExportService
         projectInfo.Metadata.OptimizedSize = optimizedSize;
         projectInfo.Metadata.EstimatedTokens = (int)(optimizedSize / 4);
         projectInfo.Metadata.RecommendedContextWindow = GetRecommendedWindow(optimizedSize / 4);
-
         Logger.LogSuccess($"Экспорт завершен! Обработано файлов: {projectInfo.TotalFiles}");
         Logger.Log($"Оригинальный размер: {originalSize:N0} символов (~{originalSize / 4:N0} токенов)");
         Logger.Log($"Оптимизированный размер: {optimizedSize:N0} символов (~{optimizedSize / 4:N0} токенов)");

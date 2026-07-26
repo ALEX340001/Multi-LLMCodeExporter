@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,7 +6,6 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 namespace LLMCodeExporter.Infrastructure.Utils;
-
 public static class Logger
 {
     private static readonly string AppFolderName = "LLMCodeExporter";
@@ -14,7 +13,6 @@ public static class Logger
     private static string _appFolderPath = string.Empty;
     private static string _currentLogFile = string.Empty;
     private static bool _isInitialized = false;
-
     private static void Initialize()
     {
         if (_isInitialized) return;
@@ -25,10 +23,8 @@ public static class Logger
             string logFolderPath = Path.Combine(_appFolderPath, LogSubFolder);
             if (!Directory.Exists(logFolderPath))
                 Directory.CreateDirectory(logFolderPath);
-
             string dateTimeString = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
             _currentLogFile = Path.Combine(logFolderPath, $"log_{dateTimeString}.txt");
-
             string header = new string('=', 80) + "\n";
             header += $"LLM Code Exporter - Лог сессии\n";
             header += $"Запуск: {DateTime.Now:dd.MM.yyyy HH:mm:ss}\n";
@@ -76,7 +72,6 @@ public static class Logger
 
     public static void LogSuccess(string message) => Log(message, LogLevel.Success);
     public static void LogWarning(string message) => Log(message, LogLevel.Warning);
-
     public static string GetAppFolderPath()
     {
         Initialize();

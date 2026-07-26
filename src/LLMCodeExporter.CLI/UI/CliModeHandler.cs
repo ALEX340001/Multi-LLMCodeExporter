@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -11,9 +11,7 @@ using LLMCodeExporter.Core.Interfaces;
 using LLMCodeExporter.Core.Models;
 using LLMCodeExporter.Infrastructure.Services;
 using LLMCodeExporter.Infrastructure.Utils;
-
 namespace LLMCodeExporter.CLI.UI;
-
 /// <summary>
 /// Обработчик CLI режима работы
 /// </summary>
@@ -36,24 +34,20 @@ public static class CliModeHandler
     public static CliResult Execute(string projectPath, ExportSettings? settings)
     {
         var result = new CliResult();
-
         try
         {
             // Инициализация сервисов
             IFileScanner scanner = new FileScanner();
             ICodeProcessor processor = new CodeProcessor();
             IExportService exporter = new ExportService(processor);
-
             // Настройка параметров
             if (settings == null)
                 settings = new ExportSettings();
-
             // Автоопределение типа проекта, если не задан явно
             if (settings.ProjectType == ProjectType.AutoDetect)
             {
                 var detected = ProjectTypeDetector.Detect(projectPath);
                 settings.ProjectType = detected;
-
                 if (detected == ProjectType.Hybrid)
                 {
                     ApplyHybridAutoDetection(settings, projectPath);
@@ -72,10 +66,8 @@ public static class CliModeHandler
             // Сканирование проекта
             Console.WriteLine("⏳ Сканирование проекта...");
             var projectInfo = scanner.ScanProject(projectPath, settings);
-
             // Вывод информации
             PrintProjectInfo(projectInfo, settings);
-
             result.Success = true;
             result.ProjectInfo = projectInfo;
             result.Settings = settings;
@@ -141,7 +133,6 @@ public static class CliModeHandler
         Console.WriteLine($"📦 Проект: {projectInfo.ProjectName}");
         Console.WriteLine($"📊 Файлов: {projectInfo.TotalFiles}");
         Console.WriteLine($"⚙️  Режим: {settings.Mode}");
-
         if (settings.ProjectType == ProjectType.Hybrid)
         {
             Console.WriteLine($"🔹 Бекенд язык: {settings.BackendLanguage}");
@@ -150,10 +141,8 @@ public static class CliModeHandler
 
         if (settings.ExcludePatterns.Any())
             Console.WriteLine($"🚫 Исключения: {string.Join(", ", settings.ExcludePatterns)}");
-
         if (settings.IncludeOnlyPatterns.Any())
             Console.WriteLine($"✅ Только: {string.Join(", ", settings.IncludeOnlyPatterns)}");
-
         Console.WriteLine();
     }
 }

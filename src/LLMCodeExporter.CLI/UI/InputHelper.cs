@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -7,7 +7,6 @@
  */
 namespace LLMCodeExporter.CLI.UI;
 using Infrastructure.Utils;
-
 public static class InputHelper
 {
     /// <summary>
@@ -73,7 +72,6 @@ public static class InputHelper
             Console.Write("📁 > ");
             string input = Console.ReadLine()?.Trim().Trim('"', '\'', '`') ?? string.Empty;
             Logger.Log($"[Попытка {attemptCount}] Получен путь: {(string.IsNullOrWhiteSpace(input) ? "<пустой>" : input)}");
-
             if (string.IsNullOrWhiteSpace(input))
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;

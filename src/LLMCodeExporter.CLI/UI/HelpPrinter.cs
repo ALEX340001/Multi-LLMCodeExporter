@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
@@ -6,9 +6,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 using System;
-
 namespace LLMCodeExporter.CLI.UI;
-
 /// <summary>
 /// Вывод справки по использованию приложения
 /// </summary>
@@ -55,7 +53,6 @@ public static class HelpPrinter
         Console.WriteLine("  --output=path       Путь для сохранения результата");
         Console.WriteLine("  --format=md+json    Markdown с встроенным JSON-блоком (полный отчёт)");
         Console.WriteLine("  --help, -h, /?      Показать эту справку");
-
         Console.WriteLine();
         Console.WriteLine("ПРИМЕРЫ:");
         Console.WriteLine();

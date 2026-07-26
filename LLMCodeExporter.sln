@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -17,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLMCodeExporter_TEST", "LLM
 		{A00FC5BB-F911-4B0E-A869-E389C6324EFC} = {A00FC5BB-F911-4B0E-A869-E389C6324EFC}
 		{C0EF642F-FBEE-4FF3-A93E-28D66900746A} = {C0EF642F-FBEE-4FF3-A93E-28D66900746A}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLMCode_Importer", "LLMCode_Importer\LLMCode_Importer.csproj", "{95C17655-3A25-4F44-B121-8C669A5E5E4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +77,18 @@ Global
 		{D04BB31B-22C0-4DA6-9BF4-7DAE14F81969}.Release|x64.Build.0 = Release|Any CPU
 		{D04BB31B-22C0-4DA6-9BF4-7DAE14F81969}.Release|x86.ActiveCfg = Release|Any CPU
 		{D04BB31B-22C0-4DA6-9BF4-7DAE14F81969}.Release|x86.Build.0 = Release|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Debug|x64.Build.0 = Debug|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Debug|x86.Build.0 = Debug|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Release|x64.ActiveCfg = Release|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Release|x64.Build.0 = Release|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Release|x86.ActiveCfg = Release|Any CPU
+		{95C17655-3A25-4F44-B121-8C669A5E5E4D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
