@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Режимы экспорта — Multi‑LLMCodeExporter</title>
-    <meta name="description" content="Сравнение трёх режимов экспорта: Compact, Balanced, Full. Когда и какой выбирать.">
+    <meta name="description" content="Сравнение трёх режимов экспорта: Compact, Balanced, Full. Когда и какой выбирать. Гибридный режим для проектов с бекендом и фронтендом.">
 
-      <link rel="stylesheet" href="../css/variables.css">   
+    <link rel="stylesheet" href="../css/variables.css">   
     <link rel="stylesheet" href="../css/reset.css">
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/layout.css">
@@ -17,8 +17,6 @@
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/install.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
-
 </head>
 <body>
     <div id="google_translate_element" style="display:none;"></div>
@@ -35,12 +33,13 @@
                     <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
                         Программа предлагает <span class="underline"><strong>три режима экспорта</strong></span>, которые отличаются степенью детализации и итоговым размером выходного файла.
                         Выбор режима зависит от размера вашего проекта, доступного контекстного окна LLM и ваших целей.
+                        Кроме того, для проектов, содержащих одновременно бекенд и фронтенд, доступен <strong>гибридный режим</strong> – он не влияет на степень сжатия, но определяет, какие языки и файлы будут включены.
                     </p>
                 </div>
 
                 <!-- 1. Сравнение режимов (таблица) -->
                 <div class="project-card">
-                    <h2>1. Сравнение режимов</h2>
+                    <h2>1. Сравнение режимов экспорта</h2>
                     <table class="compare-table">
                         <thead>
                             <tr>
@@ -101,6 +100,26 @@
                             Используйте, если вам критически важен каждый символ кода, например, для отладки, рефакторинга или детального анализа. Подходит только для очень больших контекстных окон (200K+ токенов) или для небольших проектов.
                         </p>
                     </div>
+
+                    <!-- НОВЫЙ ПОДРАЗДЕЛ: Гибридный режим -->
+                    <div class="class-card">
+                        <h3>2.4 Гибридный режим (Hybrid) – для проектов с бекендом и фронтендом</h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
+                            <span class="underline"><strong>Гибридный режим</strong></span> – это не отдельный режим экспорта (он не меняет степень сжатия), а <strong>способ указать, что проект содержит как бекенд, так и фронтенд</strong>. 
+                            В этом режиме программа автоматически определяет и включает файлы обоих слоёв, а также строит интеграционную диаграмму, показывающую, как они взаимодействуют.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-top: 0.5rem;">
+                            Вы можете включить гибридный режим несколькими способами:
+                        </p>
+                        <ul style="color: var(--text-secondary); line-height: 1.8; margin: 0.5rem 0 0 1.5rem; padding-left: 0.5rem;">
+                            <li>В <strong>интерактивном режиме</strong> – при настройке выберите пункт «Гибридный (выбор языков)».</li>
+                            <li>В <strong>CLI-режиме</strong> – используйте флаг <code>--hybrid</code> (опционально с <code>--backend</code> и <code>--frontend</code> для указания конкретных языков).</li>
+                            <li>В <strong>веб-конфигураторе</strong> – выберите пресет «Гибридный» в выпадающем списке.</li>
+                        </ul>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-top: 0.5rem;">
+                            Подробнее о флагах CLI читайте на странице <a href="./cli.html">CLI‑ключи и фильтры</a>.
+                        </p>
+                    </div>
                 </div>
 
                 <!-- 3. Советы по экономии токенов -->
@@ -110,14 +129,16 @@
                         <li>Используйте фильтры (<code>--exclude</code>) для удаления тестов, UI‑файлов или автоматически сгенерированного кода.</li>
                         <li>Применяйте preset <code>--backend-only</code>, если вам нужна только серверная логика.</li>
                         <li>В режиме <code>Compact</code> дополнительно можно удалить комментарии (<code>--no-comments</code>) и пустые строки.</li>
+                        <li>Для гибридных проектов используйте флаги <code>--backend</code> и <code>--frontend</code>, чтобы явно указать, какие языки включать – это поможет избежать лишних файлов.</li>
                     </ul>
                 </div>
 
-                <!-- 4. Следующие шаги -->
+                <!-- 4. Следующие шаги (обновлено) -->
                 <div class="project-card">
                     <h2>4. Следующие шаги</h2>
                     <p style="color: var(--text-secondary); line-height: 1.6;">
-                        Подробнее о фильтрах и ключах читайте на странице <a href="./cli.html">CLI‑ключи и фильтры</a>.
+                        Подробнее о фильтрах, ключах и гибридном режиме читайте на странице <a href="./cli.html">CLI‑ключи и фильтры</a>.
+                        Также вы можете попробовать <a href="/Multi-LLMCodeExporter/files-web-wiki/index.html" target="_blank">веб-конфигуратор</a> для визуальной настройки.
                     </p>
                 </div>
 
