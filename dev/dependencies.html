@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="../css/dev.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* (стили остаются без изменений, как в оригинале) */
         .project-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -158,7 +157,7 @@
                     <h2>Общая карта вызовов (flowchart)</h2>
                     <div class="mermaid-wrapper" id="mainDiagram">
                         <div class="mermaid">
-graph TD
+flowchart TD
     subgraph CLI_Layer["🖥️ CLI Layer (LLMCodeExporter.CLI)"]
         Main["Program.Main(args)"]
         Parse["CliArgumentParser.Parse(args)"]
@@ -173,7 +172,6 @@ graph TD
         ReadYesNo["InputHelper.ReadYesNo()"]
         CliMode["CliModeHandler.Execute()"]
         InteractiveMode["InteractiveModeHandler.Execute()"]
-        %% Новая точка входа для импортёра
         StartInput["--start-input → LLMCode_Importer.Main()"]
     end
 
@@ -238,21 +236,21 @@ graph TD
     end
 
     %% Основной поток (CLI)
-    User -->|без аргументов| Main
-    User -->|с аргументами| Main
+    User -->|"без аргументов"| Main
+    User -->|"с аргументами"| Main
     Main --> Parse
-    Parse -->|hasCliArgs=false| InputPath
+    Parse -->|"hasCliArgs=false"| InputPath
     InputPath --> NormPath
     NormPath --> Scanner
     Scanner --> PM
     PM --> Scanner
-    Scanner -->|ProjectInfo| MenuStats
+    Scanner -->|"ProjectInfo"| MenuStats
     MenuStats --> MenuConfig
     MenuConfig --> ReadChoice
     MenuConfig --> ReadLine
     MenuConfig --> ReadYesNo
-    MenuConfig -->|ExportSettings| Scanner
-    Scanner -->|ProjectInfo| Export
+    MenuConfig -->|"ExportSettings"| Scanner
+    Scanner -->|"ProjectInfo"| Export
     Export --> Formatter
     Formatter --> NavGen
     Formatter --> ArchAnalyzer
@@ -260,22 +258,22 @@ graph TD
     Formatter --> StructBuilder
     Export --> ReadFile
     ReadFile --> Optimizer
-    Optimizer -->|Mode=Compact| Extract
-    Optimizer -->|Mode=Balanced| Collapse
+    Optimizer -->|"Mode=Compact"| Extract
+    Optimizer -->|"Mode=Balanced"| Collapse
     Optimizer --> Processor
     Processor --> Formatter
     Formatter --> Export
     Export --> Logger
-    Export -->|ExportResult| MenuShow
+    Export -->|"ExportResult"| MenuShow
     MenuShow --> User
 
     %% CLI-режим
     Main --> Parse
-    Parse -->|hasCliArgs=true| NormPath
+    Parse -->|"hasCliArgs=true"| NormPath
     NormPath --> Scanner
     Scanner --> PM
     PM --> Scanner
-    Scanner -->|ProjectInfo| Export
+    Scanner -->|"ProjectInfo"| Export
     Export --> Formatter
     Formatter --> NavGen
     Formatter --> ArchAnalyzer
@@ -283,17 +281,17 @@ graph TD
     Formatter --> StructBuilder
     Export --> ReadFile
     ReadFile --> Optimizer
-    Optimizer -->|Mode=Compact| Extract
-    Optimizer -->|Mode=Balanced| Collapse
+    Optimizer -->|"Mode=Compact"| Extract
+    Optimizer -->|"Mode=Balanced"| Collapse
     Optimizer --> Processor
     Processor --> Formatter
     Formatter --> Export
     Export --> Logger
-    Export -->|ExportResult| Console
+    Export -->|"ExportResult"| Console
     Console --> User
 
     %% Импортёр (--start-input)
-    Main -->|args[0] == "--start-input"| StartInput
+    Main -->|"args[0] == '--start-input'"| StartInput
     StartInput --> ImporterMain
     ImporterMain --> ParseImporter
     ParseImporter --> Options
@@ -303,7 +301,7 @@ graph TD
     Console --> User
 
     %% Веб-конфигуратор (открывается в браузере)
-    User -->|открывает index.html| Browser
+    User -->|"открывает index.html"| Browser
     Browser --> WebApp
     WebApp --> WebProviders
     WebApp --> WebDOM
@@ -311,9 +309,9 @@ graph TD
     WebApp --> WebClipboard
     WebApp --> WebUtils
     WebApp --> WebConfigModule
-    WebProviders -->|сохраняет/загружает| localStorage
-    WebGenerators -->|строит команду| CommandPreview
-    WebClipboard -->|копирует| ClipboardAPI
+    WebProviders -->|"сохраняет/загружает"| localStorage
+    WebGenerators -->|"строит команду"| CommandPreview
+    WebClipboard -->|"копирует"| ClipboardAPI
 
     %% Связи через интерфейсы
     Scanner -.-> IFileScanner
@@ -353,7 +351,7 @@ graph TD
                     </div>
                 </div>
 
-                <!-- Ожидания между слоями (обновлены) -->
+                <!-- Ожидания между слоями -->
                 <div class="project-card">
                     <h2>Ожидания между слоями (Clean Architecture + интеграция)</h2>
                     <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.2rem; margin: 0;">
@@ -394,7 +392,7 @@ graph TD
                 curve: 'basis'
             }
         });
-        // (код интерактивности из оригинального файла, без изменений)
+
         function makeDraggable(wrapper, zoomInBtn, zoomOutBtn, resetBtn) {
             const mermaidDiv = wrapper.querySelector('.mermaid');
             if (!mermaidDiv) return;
@@ -470,6 +468,7 @@ graph TD
                 updateTransform();
             });
         }
+
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const wrapper = document.getElementById('mainDiagram');
