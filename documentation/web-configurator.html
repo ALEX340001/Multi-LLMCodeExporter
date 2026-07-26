@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Веб-конфигуратор — Multi‑LLMCodeExporter</title>
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/layout.css" />
+    <link rel="stylesheet" href="../css/navigation.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/utilities.css" />
+    <link rel="stylesheet" href="../css/clock.css" />
+    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/install.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div id="google_translate_element" style="display:none;"></div>
+    <div class="nav-wrapper"></div>
+    <main>
+        <div id="clocks-container" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></div>
+        <div class="container">
+            <div class="page-content">
+                <h1 class="page-title">Веб-конфигуратор</h1>
+
+                <div class="inline-card" style="margin-bottom:2rem;">
+                    <p style="color: var(--text-secondary); line-height:1.6; margin:0;">
+                        <strong>Веб-конфигуратор</strong> – это графический интерфейс для настройки параметров экспорта без использования командной строки. Он позволяет визуально выбирать режимы, фильтры, пресеты, сохранять конфигурации и копировать готовую команду для запуска.
+                    </p>
+                </div>
+
+                <div class="project-card">
+                    <h2>Возможности</h2>
+                    <ul style="color: var(--text-secondary); line-height:1.8; padding-left:1.5rem;">
+                        <li>Выбор режима экспорта: Compact, Balanced, Full.</li>
+                        <li>Выбор формата вывода: Markdown, Plain Text, JSON, Markdown+JSON.</li>
+                        <li>Применение предустановленных пресетов (Backend Only, Domain+Services, Максимальное сжатие, Веб-приложение, Гибридный).</li>
+                        <li>Настройка фильтров включения/исключения файлов и папок.</li>
+                        <li>Управление дополнительными опциями: удаление комментариев, сохранение пустых строк, консолидация using, генерация Quick Links.</li>
+                        <li>Сохранение конфигураций в историю (до 50 записей) с возможностью загрузки и удаления.</li>
+                        <li>Автоматическая загрузка последней использованной конфигурации.</li>
+                        <li>Экспорт истории конфигураций в JSON-файл.</li>
+                        <li>Копирование сгенерированной команды в буфер обмена одним кликом.</li>
+                        <li>Настройка пути к скрипту <code>run.sh</code>.</li>
+                    </ul>
+                </div>
+
+                <div class="project-card">
+                    <h2>Как открыть</h2>
+                    <p style="color: var(--text-secondary); line-height:1.6;">
+                        Веб-конфигуратор находится в папке <code>files-web-wiki</code> в корне проекта. Вы можете открыть его в браузере двумя способами:
+                    </p>
+                    <ol style="color: var(--text-secondary); line-height:1.8; padding-left:1.5rem; margin-top:0.5rem;">
+                        <li><strong>Локально:</strong> откройте файл <code>files-web-wiki/index.html</code> в вашем браузере.</li>
+                        <li><strong>Через GitHub Pages:</strong> если вы разместили проект на GitHub Pages, перейдите по ссылке:<br />
+                            <a href="https://alex340001.github.io/Multi-LLMCodeExporter/files-web-wiki/index.html" target="_blank">https://alex340001.github.io/Multi-LLMCodeExporter/files-web-wiki/index.html</a>
+                        </li>
+                    </ol>
+                    <p style="color: var(--text-secondary); line-height:1.6; margin-top:1rem;">
+                        <strong>Примечание:</strong> конфигуратор работает полностью в браузере, все данные (история, настройки) сохраняются в <code>localStorage</code>.
+                    </p>
+                </div>
+
+                <div class="project-card">
+                    <h2>Скриншот</h2>
+                    <p style="color: var(--text-secondary); line-height:1.6;">
+                        (Здесь может быть скриншот интерфейса. Вставьте изображение при необходимости.)
+                    </p>
+                </div>
+
+                <div class="project-card">
+                    <h2>Связанные страницы</h2>
+                    <ul style="color: var(--text-secondary); line-height:1.8; padding-left:1.5rem;">
+                        <li><a href="./quickstart.html">Быстрый старт</a> – общее описание работы с программой.</li>
+                        <li><a href="./cli.html">CLI-ключи и фильтры</a> – полный список параметров командной строки.</li>
+                        <li><a href="./modes.html">Режимы экспорта</a> – подробнее о каждом режиме.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="../index.js"></script>
+</body>
+</html>
