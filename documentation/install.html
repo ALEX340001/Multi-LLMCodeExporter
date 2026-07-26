@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Установка — Multi‑LLMCodeExporter</title>
  
-        <link rel="stylesheet" href="../css/variables.css">   
+    <link rel="stylesheet" href="../css/variables.css">   
     <link rel="stylesheet" href="../css/reset.css">
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/layout.css">
@@ -16,8 +16,6 @@
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/install.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
-
 </head>
 <body>
     <div id="google_translate_element" style="display:none;"></div>
@@ -47,10 +45,14 @@
             <pre><code>git clone https://github.com/ALEX340001/Multi-LLMCodeExporter.git
 cd Multi-LLMCodeExporter
 dotnet build</code></pre>
+
+            <h2>Примечание</h2>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+                Вместе с основным приложением собирается и утилита <strong>LLMCode_Importer</strong> (импортёр). Она располагается в папке <code>LLMCode_Importer/bin/Debug/net8.0/</code> и может использоваться как отдельный исполняемый файл.
+            </p>
         </div>
     </div>
 </main>
-
 
     <script src="../index.js"></script>
 </body>
