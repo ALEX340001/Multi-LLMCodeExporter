@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Импортёр – распаковка снапшотов — Multi‑LLMCodeExporter</title>
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/layout.css" />
+    <link rel="stylesheet" href="../css/navigation.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/utilities.css" />
+    <link rel="stylesheet" href="../css/clock.css" />
+    <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/install.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div id="google_translate_element" style="display:none;"></div>
+    <div class="nav-wrapper"></div>
+    <main>
+        <div id="clocks-container" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></div>
+        <div class="container">
+            <div class="page-content">
+                <h1 class="page-title">Импортёр (LLMCode_Importer)</h1>
+
+                <div class="inline-card" style="margin-bottom:2rem;">
+                    <p style="color: var(--text-secondary); line-height:1.6; margin:0;">
+                        <strong>Импортёр</strong> – это утилита, которая распаковывает файлы из Markdown-снапшота, созданного основным экспортёром. Она позволяет восстановить проект или отдельные файлы в исходную структуру папок.
+                    </p>
+                </div>
+
+                <div class="project-card">
+                    <h2>Как это работает</h2>
+                    <p style="color: var(--text-secondary); line-height:1.6;">
+                        Импортёр сканирует Markdown-файл, ищет блоки кода с заголовками вида <code>## 📄 `путь/к/файлу`</code> и создаёт соответствующие файлы в указанной выходной папке, сохраняя вложенность директорий.
+                    </p>
+                </div>
+
+                <div class="project-card">
+                    <h2>Запуск</h2>
+                    <h3>Через основное приложение (с ключом <code>--start-input</code>)</h3>
+                    <pre><code>dotnet run --project src/LLMCodeExporter.CLI -- --start-input "snapshot.md" --output "./restored"</code></pre>
+
+                    <h3>Напрямую</h3>
+                    <pre><code>dotnet run --project LLMCode_Importer -- "snapshot.md" --output "./restored"</code></pre>
+
+                    <p style="color: var(--text-secondary); line-height:1.6; margin-top:1rem;">
+                        Если не указать <code>--output</code>, файлы будут распакованы в текущую папку.  
+                        Если не указать аргументы, импортёр запустится в интерактивном режиме.
+                    </p>
+                </div>
+
+                <div class="project-card">
+                    <h2>Ключи импортёра</h2>
+                    <table class="compare-table cli-table">
+                        <thead><tr><th>Ключ</th><th>Описание</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>--output, -o &lt;папка&gt;</code></td><td>Выходная папка для распакованных файлов.</td></tr>
+                            <tr><td><code>--config, -c &lt;файл&gt;</code></td><td>Файл конфигурации <code>unpacker.settings.json</code> (по умолчанию ищется в текущей папке).</td></tr>
+                            <tr><td><code>--overwrite</code></td><td>Перезаписывать существующие файлы (по умолчанию).</td></tr>
+                            <tr><td><code>--no-overwrite</code></td><td>Не перезаписывать существующие файлы.</td></tr>
+                            <tr><td><code>--help, -h</code></td><td>Показать справку.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="project-card">
+                    <h2>Файл конфигурации</h2>
+                    <p style="color: var(--text-secondary); line-height:1.6;">
+                        По умолчанию импортёр ищет файл <code>unpacker.settings.json</code> в текущей папке.  
+                        Пример содержимого:
+                    </p>
+                    <pre><code>{
+    "OutputRoot": "./restored",
+    "Overwrite": false,
+    "DefaultSnapshotPath": "snapshot.md"
+}</code></pre>
+                    <p style="color: var(--text-secondary); line-height:1.6; margin-top:0.5rem;">
+                        Параметры, переданные через командную строку, имеют приоритет над конфигом.
+                    </p>
+                </div>
+
+                <div class="project-card">
+                    <h2>Пример использования</h2>
+                    <pre><code># Распаковать снапшот в папку my_project, перезаписывая файлы
+LLMCode_Importer snapshot.md --output ./my_project</code></pre>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="../index.js"></script>
+</body>
+</html>
