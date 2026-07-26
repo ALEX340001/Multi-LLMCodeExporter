@@ -6,25 +6,17 @@
     <title>Логирование — Multi‑LLMCodeExporter</title>
     <meta name="description" content="Система логирования: устройство, уровни, хранение, управление.">
 
-
-<link rel="stylesheet" href="../css/variables.css">   
-<link rel="stylesheet" href="../css/reset.css">
-<link rel="stylesheet" href="../css/base.css">
-<link rel="stylesheet" href="../css/layout.css">
-<link rel="stylesheet" href="../css/navigation.css">
-<link rel="stylesheet" href="../css/components.css">
-<link rel="stylesheet" href="../css/utilities.css">
-<link rel="stylesheet" href="../css/clock.css">
-<link rel="stylesheet" href="../css/home.css">
-<link rel="stylesheet" href="../css/dev.css">   
-
-
-
-     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
-
-
-
+    <link rel="stylesheet" href="../css/variables.css">   
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/navigation.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="../css/clock.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/dev.css">   
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="google_translate_element" style="display:none;"></div>
@@ -40,7 +32,10 @@
                 <!-- Введение -->
                 <div class="inline-card" style="margin-bottom: 2rem;">
                     <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
-                        В приложении используется простая, но эффективная система логирования на основе статического класса <span class="underline"><strong>Logger</strong></span> из пространства имён <code>LLMCodeExporter.Infrastructure.Utils</code>. Логи помогают отслеживать работу программы, диагностировать ошибки и анализировать производительность.
+                        В приложении используется простая, но эффективная система логирования на основе статического класса <span class="underline"><strong>Logger</strong></span> из пространства имён <code>LLMCodeExporter.Infrastructure.Utils</code>. 
+                        Эта система применяется во всех консольных компонентах: основном CLI, импортёре (<code>LLMCode_Importer</code>) и всех внутренних сервисах. 
+                        Для веб-конфигуратора используется отдельный механизм (тост-уведомления и <code>console.log</code>), но общая философия логирования сохраняется.
+                        Логи помогают отслеживать работу программы, диагностировать ошибки и анализировать производительность.
                     </p>
                 </div>
 
@@ -61,6 +56,11 @@
                         <span class="underline"><strong>Автоматическая очистка:</strong></span> при запуске программа удаляет логи старше 30 дней (вызывается <code>Logger.CleanOldLogs(30)</code>). Это предотвращает переполнение диска.
                     </p>
 
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
+                        <span class="underline"><strong>Логи импортёра:</strong></span> 
+                        Утилита <code>LLMCode_Importer</code> также использует этот же логгер – все её сообщения записываются в тот же файл сессии, что позволяет отслеживать полный цикл работы (экспорт → импорт) в одном месте.
+                    </p>
+
                     <h3>1.1 Структура лог-файла</h3>
                     <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
                         Каждый файл начинается с заголовка сессии, затем каждая запись имеет вид:
@@ -69,7 +69,7 @@
 <code>[ВРЕМЯ] [УРОВЕНЬ] Сообщение</code></pre>
 
                     <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
-                        <strong>Пример реального лог-файла:</strong>
+                        <strong>Пример реального лог-файла (с интеграцией импортёра):</strong>
                     </p>
                     <div class="log-example">
 <span class="time">[21:45:38]</span> <span class="level-info">[INFO]</span> <span class="message">=== Приложение запущено ===</span>
@@ -85,7 +85,11 @@
 <span class="time">[21:45:51]</span> <span class="level-info">[INFO]</span> <span class="message">Обработан [1/42]: src/Program.cs</span>
 <span class="time">[21:45:51]</span> <span class="level-error">[ERROR]</span> <span class="message">Ошибка при чтении src/UnicodeFile.cs: System.IO.IOException: Нет доступа</span>
 <span class="time">[21:45:55]</span> <span class="level-success">[SUCCESS]</span> <span class="message">Экспорт завершен! Обработано файлов: 42</span>
-<span class="time">[21:45:55]</span> <span class="level-info">[INFO]</span> <span class="message">=== Приложение завершено ===</span>
+<span class="time">[21:46:02]</span> <span class="level-info">[INFO]</span> <span class="message">=== Импортёр запущен (--start-input) ===</span>
+<span class="time">[21:46:02]</span> <span class="level-info">[INFO]</span> <span class="message">Начало распаковки снапшота: snapshot.md</span>
+<span class="time">[21:46:03]</span> <span class="level-success">[SUCCESS]</span> <span class="message">Распаковано файлов: 42</span>
+<span class="time">[21:46:03]</span> <span class="level-info">[INFO]</span> <span class="message">=== Импортёр завершён ===</span>
+<span class="time">[21:46:05]</span> <span class="level-info">[INFO]</span> <span class="message">=== Приложение завершено ===</span>
                     </div>
                 </div>
 
@@ -99,7 +103,7 @@
                         <li><strong style="color: #60a5fa;">INFO</strong> – стандартные информационные сообщения: запуск, завершение, шаги процесса, ввод пользователя, прогресс.</li>
                         <li><strong style="color: #fbbf24;">WARN</strong> – предупреждения: некритичные проблемы, которые не останавливают выполнение (например, проект большого размера, исключённые файлы, некорректный выбор пользователя).</li>
                         <li><strong style="color: #f87171;">ERROR</strong> – ошибки: проблемы с чтением файлов, исключения, сбои в работе сервисов. Они не останавливают выполнение, но записываются для диагностики.</li>
-                        <li><strong style="color: #34d399;">SUCCESS</strong> – успешное завершение важных этапов: сканирование, экспорт, загрузка навигации.</li>
+                        <li><strong style="color: #34d399;">SUCCESS</strong> – успешное завершение важных этапов: сканирование, экспорт, загрузка навигации, распаковка снапшота.</li>
                     </ul>
 
                     <div class="class-card">
@@ -110,9 +114,10 @@
                             <li><strong>Ввод пользователя</strong> – каждая попытка ввода пути, выбора в меню.</li>
                             <li><strong>Сканирование проекта</strong> – начало, количество найденных и исключённых файлов, применённые фильтры.</li>
                             <li><strong>Экспорт</strong> – начало, прогресс по файлам, размеры, степень сжатия.</li>
+                            <li><strong>Импорт (распаковка снапшота)</strong> – начало, количество распакованных файлов, ошибки доступа или невалидных блоков.</li>
                             <li><strong>Ошибки</strong> – любые исключения с полным стеком вызовов (если доступен).</li>
                             <li><strong>Предупреждения</strong> – например, если проект превышает рекомендуемый размер.</li>
-                            <li><strong>Успешные операции</strong> – завершение сканирования, экспорта, загрузки компонентов (навигация, футер).</li>
+                            <li><strong>Успешные операции</strong> – завершение сканирования, экспорта, импорта, загрузки компонентов (навигация, футер).</li>
                         </ul>
                     </div>
                 </div>
@@ -201,7 +206,6 @@
                         </p>
                         <ul style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
                             <li>Создаёт папку <code>Документы/LLMCodeExporter/Logs/</code> (если её нет).</li>
-                            
                             <li>Генерирует имя файла: <code>log_yyyy-MM-dd_HHmmss.txt</code>.</li>
                             <li>Записывает шапку:
                                 <pre style="background: var(--card-bg); padding: 0.6rem 1rem; border-radius: 8px; color: var(--text-primary); font-size: 0.85rem;">
@@ -209,7 +213,7 @@
                                 LLM Code Exporter - Лог сессии
                                 Запуск: 19.06.2026 21:45:38
                                 ================================================================================</pre>
-                                                            </li>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -221,7 +225,8 @@
                         <span class="underline"><strong>Logger</strong></span> интегрирован во все ключевые места:
                     </p>
                     <ul style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
-                        <li><strong>Program.cs</strong> – логирует запуск, режим, системную информацию, ошибки.</li>
+                        <li><strong>Program.cs (CLI)</strong> – логирует запуск, режим, системную информацию, ошибки, а также передачу управления импортёру.</li>
+                        <li><strong>LLMCode_Importer.Program</strong> – логирует начало распаковки, количество найденных блоков, ошибки доступа к файлам.</li>
                         <li><strong>FileScanner.ScanProject</strong> – логирует начало сканирования, количество файлов до/после фильтрации, успех.</li>
                         <li><strong>ExportService.ExportProject</strong> – логирует начало, прогресс по каждому файлу, завершение со статистикой.</li>
                         <li><strong>InputHelper</strong> – логирует каждый ввод пользователя (содержимое, номер попытки, ошибки).</li>
@@ -232,26 +237,33 @@
                     <div class="class-card">
                         <h3>4.1 Пример логирования в коде</h3>
                         <pre style="background: var(--card-bg); padding: 1rem; border-radius: 8px; color: var(--text-primary); overflow-x: auto; margin-bottom: 0;">
-                                <code>// В FileScanner
-                                Logger.Log($"Начало сканирования: {projectPath}");
-                                // ...
-                                Logger.Log($"Найдено файлов (до фильтрации): {allFiles.Length}");
-                                // ...
-                                Logger.LogSuccess($"Сканирование завершено: {projectInfo.TotalFiles} файлов, ~{projectInfo.EstimatedTokens:N0} токенов");
+<code>// В FileScanner
+Logger.Log($"Начало сканирования: {projectPath}");
+// ...
+Logger.Log($"Найдено файлов (до фильтрации): {allFiles.Length}");
+// ...
+Logger.LogSuccess($"Сканирование завершено: {projectInfo.TotalFiles} файлов, ~{projectInfo.EstimatedTokens:N0} токенов");
 
-                                // В ExportService
-                                Logger.Log($"Начало экспорта проекта '{projectInfo.ProjectName}' в режиме {settings.Mode}");
-                                // ...
-                                Logger.Log($"Обработан [{processedFiles}/{projectInfo.TotalFiles}]: {file.RelativePath}");
-                                // ...
-                                Logger.LogSuccess($"Экспорт завершен! Обработано файлов: {projectInfo.TotalFiles}");
-                                Logger.Log($"Оригинальный размер: {originalSize:N0} символов (~{originalSize / 4:N0} токенов)");
+// В ExportService
+Logger.Log($"Начало экспорта проекта '{projectInfo.ProjectName}' в режиме {settings.Mode}");
+// ...
+Logger.Log($"Обработан [{processedFiles}/{projectInfo.TotalFiles}]: {file.RelativePath}");
+// ...
+Logger.LogSuccess($"Экспорт завершен! Обработано файлов: {projectInfo.TotalFiles}");
+Logger.Log($"Оригинальный размер: {originalSize:N0} символов (~{originalSize / 4:N0} токенов)");
 
-                                // В InputHelper
-                                Logger.Log($"Запрос ввода: {message}");
-                                Logger.Log($"[Попытка {attemptCount}] Получен ввод: {(string.IsNullOrWhiteSpace(input) ? "<пустой>" : input)}");
-                                // ...
-                                Logger.LogError($"Ошибка при вводе (попытка {attemptCount})", ex);</code></pre>
+// В InputHelper
+Logger.Log($"Запрос ввода: {message}");
+Logger.Log($"[Попытка {attemptCount}] Получен ввод: {(string.IsNullOrWhiteSpace(input) ? "<пустой>" : input)}");
+// ...
+Logger.LogError($"Ошибка при вводе (попытка {attemptCount})", ex);
+
+// В SnapshotUnpacker.UnpackAsync
+Logger.Log($"Начало распаковки снапшота: {snapshotPath}");
+// ...
+Logger.Log($"Распакован файл: {relativePath}");
+// ...
+Logger.LogSuccess($"Распаковано файлов: {result.ExtractedCount}");</code></pre>
                     </div>
                 </div>
 
@@ -270,7 +282,7 @@
                 <div class="project-card">
                     <h2>6. Следующая страница</h2>
                     <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
-                        Теперь мы знаем, как работает логирование. Осталась последняя страница — <strong>«Конфигурация»</strong> (<code>appsettings.json</code>), где мы разберём, какие параметры можно менять и как это влияет на приложение.
+                        Теперь мы знаем, как работает логирование. Переходите к <strong><a href="/dev/methods.html">Логике методов</a></strong>, где детально разобраны все ключевые функции, включая методы импортёра и веб-конфигуратора.
                     </p>
                 </div>
 
