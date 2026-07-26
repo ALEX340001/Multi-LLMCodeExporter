@@ -4,29 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Обзор проектов — Multi‑LLMCodeExporter</title>
-    <meta name="description" content="Обзор трёх проектов: CLI, Core, Infrastructure — их назначение и ключевые классы.">
-
-
-
-
-
-<link rel="stylesheet" href="../css/variables.css">   
-<link rel="stylesheet" href="../css/reset.css">
-<link rel="stylesheet" href="../css/base.css">
-<link rel="stylesheet" href="../css/layout.css">
-<link rel="stylesheet" href="../css/navigation.css">
-<link rel="stylesheet" href="../css/components.css">
-<link rel="stylesheet" href="../css/utilities.css">
-<link rel="stylesheet" href="../css/clock.css">
-<link rel="stylesheet" href="../css/home.css">
-<link rel="stylesheet" href="../css/dev.css">   
-
-
-
-     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
-
-
+    <meta name="description" content="Обзор всех проектов решения: CLI, Core, Infrastructure, Importer, Web Configurator.">
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/navigation.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="../css/clock.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/dev.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="google_translate_element" style="display:none;"></div>
@@ -39,11 +28,11 @@
 
                 <h1 class="page-title">Обзор проектов (сборок)</h1>
 
-                <!-- Введение (без карточки, но с сохранением стиля текста) -->
                 <div class="inline-card" style="margin-bottom: 2rem;">
                     <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
-                        Решение состоит из трёх проектов, каждый из которых отвечает за свой слой в архитектуре:
-                        <strong>CLI</strong> (точка входа), <strong>Core</strong> (модели и интерфейсы) и <strong>Infrastructure</strong> (реализации и утилиты).
+                        Решение состоит из пяти проектов, каждый из которых отвечает за свой слой или функцию:
+                        <strong>CLI</strong> (точка входа), <strong>Core</strong> (модели и интерфейсы), <strong>Infrastructure</strong> (реализации), 
+                        <strong>Importer</strong> (распаковка снапшотов) и <strong>Web Configurator</strong> (графический интерфейс).
                         Ниже приведено краткое описание каждого проекта, а затем перечислены все ключевые классы/интерфейсы с их методами и пояснениями.
                     </p>
                 </div>
@@ -57,7 +46,7 @@
                         <span class="underline"><strong>Назначение:</strong></span> Точка входа в приложение. Обрабатывает аргументы командной строки, запускает интерактивный режим (пошаговый опрос), инициализирует сервисы и управляет всем процессом экспорта.
                     </p>
                     <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
-                        <span class="underline"><strong>Зависимости:</strong></span> Ссылается на <code>LLMCodeExporter.Core</code> и <code>LLMCodeExporter.Infrastructure</code>.
+                        <span class="underline"><strong>Зависимости:</strong></span> Ссылается на <code>LLMCodeExporter.Core</code>, <code>LLMCodeExporter.Infrastructure</code> и <code>LLMCode_Importer</code> (для вызова через <code>--start-input</code>).
                     </p>
 
                     <!-- 1.1 Program -->
@@ -510,23 +499,71 @@
                 </div>
 
                 <!-- ======================================================== -->
-                <!-- 4. Резюме -->
+                <!-- 4. LLMCode_Importer (НОВЫЙ) -->
                 <!-- ======================================================== -->
                 <div class="project-card">
-                    <h2>4. Резюме</h2>
+                    <h2>4. LLMCode_Importer</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.8rem;">
+                        <span class="underline"><strong>Назначение:</strong></span> Утилита для распаковки файлов из Markdown-снапшота, созданного основным экспортёром. 
+                        Позволяет восстановить проект или отдельные файлы в исходную структуру папок.
+                    </p>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
+                        <span class="underline"><strong>Зависимости:</strong></span> Не зависит от других проектов решения (использует только стандартные библиотеки .NET).
+                    </p>
+                    <div class="class-card">
+                        <h3>Ключевые классы</h3>
+                        <ul class="method-list">
+                            <li><strong>Program</strong> – точка входа, обрабатывает аргументы, запускает интерактивный или CLI-режим.</li>
+                            <li><strong>SnapshotUnpacker</strong> – основной класс, выполняет распаковку: парсит Markdown, создаёт файлы и папки.</li>
+                            <li><strong>UnpackerOptions</strong> – record с настройками: выходная папка, перезапись, путь к снапшоту по умолчанию.</li>
+                            <li><strong>UnpackResult</strong> – record с результатом: количество распакованных файлов и список путей.</li>
+                            <li><strong>ConsoleHelper</strong> – статические методы для цветного вывода, интерактивных запросов и справки.</li>
+                        </ul>
+                    </div>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-top: 0.5rem;">
+                        Подробнее об архитектуре импортёра читайте на странице <a href="importer-architecture.html">Архитектура импортёра</a>.
+                    </p>
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- 5. Web Configurator (files-web-wiki) (НОВЫЙ) -->
+                <!-- ======================================================== -->
+                <div class="project-card">
+                    <h2>5. Веб-конфигуратор (files-web-wiki)</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.8rem;">
+                        <span class="underline"><strong>Назначение:</strong></span> Графический интерфейс для настройки параметров экспорта. Позволяет выбирать режим, формат, пресеты, 
+                        фильтры, сохранять конфигурации в историю (localStorage), копировать готовую команду для запуска в CLI.
+                    </p>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
+                        <span class="underline"><strong>Технологии:</strong></span> Чистый HTML5, CSS3 (CSS-переменные, адаптивность), Vanilla JavaScript (ES modules).
+                        Не требует серверной части, работает полностью в браузере.
+                    </p>
+                    <div class="class-card">
+                        <h3>Модули (ES modules)</h3>
+                        <ul class="method-list">
+                            <li><strong>app.js</strong> – инициализация, подписка на события, управление состоянием UI.</li>
+                            <li><strong>providers.js</strong> – работа с историей конфигураций (сохранение, загрузка, удаление), применение пресетов, управление настройками.</li>
+                            <li><strong>dom.js</strong> – DOM-ссылки, рендеринг справки, тост-уведомления, рендеринг истории, управление модальным окном.</li>
+                            <li><strong>generators.js</strong> – построение команды из настроек, обновление превью.</li>
+                            <li><strong>clipboard.js</strong> – копирование команды и экспорт истории в JSON.</li>
+                            <li><strong>utils.js</strong> – debounce, валидация конфигурации, безопасный JSON-парсинг.</li>
+                            <li><strong>config.js</strong> – константы (CLI_HELP, ключи localStorage).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- 6. Резюме -->
+                <!-- ======================================================== -->
+                <div class="project-card">
+                    <h2>6. Резюме</h2>
                     <ul class="method-list" style="margin-bottom: 1rem;">
                         <li><strong>Core</strong> – определяет, <em>что</em> нужно делать (интерфейсы) и <em>какие данные</em> (модели).</li>
                         <li><strong>Infrastructure</strong> – реализует <em>как</em> это делать (файловая система, оптимизация, форматирование).</li>
                         <li><strong>CLI</strong> – связывает всё вместе и управляет пользовательским взаимодействием.</li>
-
-                    
-
-                        
+                        <li><strong>Importer</strong> – дополняет экосистему возможностью восстановления проекта из снапшота.</li>
+                        <li><strong>Web Configurator</strong> – предоставляет удобный графический интерфейс для настройки параметров без консоли.</li>
                     </ul>
-    <p style="color: var(--text-secondary); line-height: 1.6; margin-top: 0.5rem;">
-    Подробнее об архитектуре импортёра читайте на странице <a href="importer-architecture.html">Архитектура импортёра</a>.
-</p>
-                    
                     <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
                         На следующих страницах мы детально разберём логику ключевых методов, построим карту вызовов и расскажем о логировании и конфигурации.
                     </p>
@@ -536,6 +573,5 @@
         </div>
     </main>
     <script src="../index.js"></script>
-   
 </body>
 </html>
