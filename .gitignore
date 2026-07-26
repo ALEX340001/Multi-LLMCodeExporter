@@ -1,37 +1,163 @@
-# Binaries
+# ============================================
+# .NET / C# проекты
+# ============================================
+
+# Артефакты сборки
 bin/
 obj/
-publish/
-*.dll
-*.exe
-*.so
-*.dylib
-
-# User-specific files
+packages/
 *.user
 *.suo
-.vs/
-
-# Logs and exports
-Exports/
-Logs/
-
-# IDE
-.idea/
-.vscode/
-.editorconfig/
-
-# Local build artifacts
-compiling_linuxx64/
+*.cache
+*.log
+*.tlog
+*.dll
+*.exe
 *.pdb
-*.deps.json
-createdump
+*.manifest
+*.resources
+*.cachefile
 
-# Local scripts
-compile_run.sh
-run-exporter.sh
-*.sh
+# Visual Studio
+.vs/
+.vscode/
+.idea/
+*.sln.ide
+*.sln.docstates
+*.csproj.user
+*.csproj.ide
+*.suo
+*.userprefs
+*.dbmdl
+*.publishsettings
+*.pubxml.user
 
-# Symlinks
-*ссылка*
-*.lnk
+# Rider / JetBrains
+.idea/
+*.sln.iml
+*.DotSettings.user
+
+# ============================================
+# Python
+# ============================================
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyz
+*.pyzw
+
+venv/
+env/
+.venv/
+.virtualenv
+.python-version
+
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.coverage
+htmlcov/
+.tox/
+
+pip-log.txt
+pip-delete-this-directory.txt
+*.egg-info/
+*.egg
+MANIFEST
+
+# ============================================
+# JavaScript / TypeScript / Node.js
+# ============================================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+dist/
+build/
+.nuxt/
+.next/
+.cache/
+.parcel-cache/
+.vercel/
+*.min.js
+*.min.css
+*.bundle.js
+*.map
+
+# ============================================
+# Системные файлы
+# ============================================
+
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ============================================
+# Логи и временные файлы приложения
+# ============================================
+
+Logs/
+*.log
+Exports/
+*.md
+*.txt
+*.json
+
+# Временные файлы тестов
+TestResults/
+*.trx
+*.coverage
+
+# ============================================
+# Конфигурации пользователя
+# ============================================
+
+appsettings.*.json
+appsettings.Development.json
+appsettings.Production.json
+secrets.json
+.env
+.env.local
+.env.*.local
+
+# ============================================
+# Экспорты для LLM (если создаются внутри проекта)
+# ============================================
+
+export/
+exports/
+llm-exports/
+
+# ============================================
+# Инструменты и IDE
+# ============================================
+
+.vscode/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+*.vimrc
+*.viminfo
+
+# ============================================
+# Исключения (файлы, которые НЕ игнорируем)
+# ============================================
+
+!.gitignore
+!README.md
+!LICENSE
+!files-web-wiki/**/*
