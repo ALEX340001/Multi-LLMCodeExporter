@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Быстрый старт — Multi‑LLMCodeExporter</title>
 
-
-       <link rel="stylesheet" href="../css/variables.css">   
+    <link rel="stylesheet" href="../css/variables.css">   
     <link rel="stylesheet" href="../css/reset.css">
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/layout.css">
@@ -17,9 +16,6 @@
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/install.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
-
-    
 </head>
 <body>
     <div id="google_translate_element" style="display:none;"></div>
@@ -88,9 +84,31 @@ LLMCodeExporter.exe "C:\Projects\MyApp"   # Windows
 LLMCodeExporter.exe "C:\Projects\MyApp" --mode=compact --backend-only</code></pre>
                 </div>
 
+                <!-- ====== Способ 3: Импортёр (распаковка снапшотов) ====== -->
+                <div class="project-card">
+                    <h2>4. Способ 3. Импортёр – распаковка снапшотов</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                        Начиная с версии v0.5, в состав решения входит <strong>LLMCode_Importer</strong> – утилита для восстановления файлов из Markdown-экспорта (снапшота), созданного основным экспортёром. Вы можете запустить импортёр как отдельно, так и через основное приложение с ключом <code>--start-input</code>.
+                    </p>
+
+                    <h3>4.1. Запуск через основное приложение (рекомендуется)</h3>
+                    <pre style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px; overflow-x: auto;"><code># Из папки решения
+dotnet run --project src/LLMCodeExporter.CLI -- --start-input "путь/к/снапшоту.md" --output "папка/для/распаковки"</code></pre>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin: 0.5rem 0 1rem;">
+                        Если не указать <code>--output</code>, файлы будут распакованы в текущую папку. Если не указать <code>--start-input</code> и не передать аргументы, импортёр запустится в <strong>интерактивном режиме</strong>.
+                    </p>
+
+                    <h3>4.2. Запуск напрямую (как отдельная утилита)</h3>
+                    <pre style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px; overflow-x: auto;"><code># Из папки решения
+dotnet run --project LLMCode_Importer -- "путь/к/снапшоту.md" --output "папка/для/распаковки"</code></pre>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-top: 1rem;">
+                        Подробнее об импортёре читайте на отдельной странице <a href="./import.html">Импортёр</a>.
+                    </p>
+                </div>
+
                 <!-- 4. Параметры командной строки -->
                 <div class="project-card">
-                    <h2>4. Параметры командной строки (ключи)</h2>
+                    <h2>5. Параметры командной строки (ключи)</h2>
 
                     <h3>Основные</h3>
                     <table class="compare-table">
@@ -162,7 +180,7 @@ LLMCodeExporter.exe "C:\Projects\MyApp" --mode=compact --backend-only</code></pr
 
                 <!-- 5. Примеры использования -->
                 <div class="project-card">
-                    <h2>5. Примеры использования</h2>
+                    <h2>6. Примеры использования</h2>
                     <pre style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px; overflow-x: auto;"><code># 1. Интерактивный режим (без ключей)
 LLMCodeExporter.exe   # Windows
 ./LLMCodeExporter.CLI # Linux (после chmod +x)
@@ -186,7 +204,7 @@ LLMCodeExporter.exe "C:\Projects\MyApp" --mode=balanced --collapse-threshold 30 
 
                 <!-- 6. Основные свойства ExportSettings -->
                 <div class="project-card">
-                    <h2>6. Основные свойства ExportSettings</h2>
+                    <h2>7. Основные свойства ExportSettings</h2>
                     <table class="compare-table">
                         <thead>
                             <tr>
@@ -212,7 +230,6 @@ LLMCodeExporter.exe "C:\Projects\MyApp" --mode=balanced --collapse-threshold 30 
                         </tbody>
                     </table>
                 </div>
-
 
             </div>
         </div>
