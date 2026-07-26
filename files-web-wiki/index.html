@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LLMCodeExporter — Configurator</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <main class="container" role="main">
+        <!-- ========== HEADER ========== -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1>⚙️ LLM<span>CodeExporter</span></h1>
+                <span class="badge">Configurator v2</span>
+            </div>
+            <div class="header-right">
+                <span class="version">📦 CLI v0.4</span>
+                <button class="btn btn-sm" id="settingsBtn" aria-label="Открыть настройки">⚙️ Настройки</button>
+                <button class="btn btn-sm" id="resetDefaultsBtn" aria-label="Сбросить настройки">↺ Сброс</button>
+            </div>
+        </header>
+
+        <!-- ========== MODAL (настройки) ========== -->
+        <div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 id="settingsModalTitle">⚙️ Настройки</h3>
+                    <button class="modal-close" id="settingsModalClose" aria-label="Закрыть настройки">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="settingsRunSh">Путь к <code>run.sh</code> (по умолчанию)</label>
+                        <input type="text" id="settingsRunSh" placeholder="./run.sh" />
+                        <div class="hint">Этот путь будет автоматически подставляться в поле на главной форме</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" id="settingsResetBtn">Сбросить</button>
+                    <button class="btn btn-primary" id="settingsSaveBtn">Сохранить</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== GRID ========== -->
+        <div class="grid-2">
+            <!-- HELP -->
+            <section class="card" aria-labelledby="helpTitle">
+                <div class="card-title" id="helpTitle">
+                    <span class="icon" aria-hidden="true">📖</span> Быстрое пояснение CLI-ключей
+                </div>
+                <div class="cli-help" id="cliHelpContainer"></div>
+            </section>
+
+            <!-- CONFIG -->
+            <section class="card" aria-labelledby="configTitle">
+                <div class="card-title" id="configTitle">
+                    <span class="icon" aria-hidden="true">🔧</span> Конфигурация команды
+                </div>
+                <form id="configForm" autocomplete="off">
+                    <div class="form-group">
+                        <label for="runShPath">Путь к <code>run.sh</code> (скрипт сборки)</label>
+                        <input type="text" id="runShPath" placeholder="/home/user/project/run.sh" />
+                        <div class="hint">Укажите полный путь до скрипта сборки для Linux</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectPath">📁 Путь к проекту <span class="text-danger">*</span></label>
+                        <input type="text" id="projectPath" placeholder="/path/to/your/project" />
+                        <div class="hint">Обязательный параметр — путь к анализируемому проекту</div>
+                    </div>
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label for="mode">Режим экспорта</label>
+                            <select id="mode">
+                                <option value="compact">🎯 Compact (структура + сигнатуры)</option>
+                                <option value="balanced" selected>⚖️ Balanced (бизнес-логика без UI)</option>
+                                <option value="full">📚 Full (весь проект с UI)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="format">Формат вывода</label>
+                            <select id="format">
+                                <option value="markdown" selected>Markdown (рекомендуется)</option>
+                                <option value="plain">Plain Text</option>
+                                <option value="json">JSON</option>
+                                <option value="md+json">Markdown + JSON</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="preset">🎛️ Быстрый пресет</label>
+                        <select id="preset">
+                            <option value="">— Без пресета —</option>
+                            <option value="backend-only">Backend Only (исключить UI)</option>
+                            <option value="domain-services">Domain + Services (бизнес-логика)</option>
+                            <option value="compact-aggressive">Максимальное сжатие</option>
+                            <option value="web-app">Веб-приложение (JS, CSS, HTML)</option>
+                            <option value="hybrid">Гибридный (Backend + Frontend)</option>
+                        </select>
+                        <div class="hint">Применяет набор предустановленных фильтров и настроек</div>
+                    </div>
+                    <div class="row-2 hybrid-lang-row" id="hybridLangRow">
+                        <div class="form-group">
+                            <label for="backendLang">Backend язык</label>
+                            <select id="backendLang">
+                                <option value="CSharp">C#</option>
+                                <option value="Python">Python</option>
+                                <option value="JavaScript">JavaScript</option>
+                                <option value="TypeScript">TypeScript</option>
+                                <option value="Java">Java</option>
+                                <option value="Go">Go</option>
+                                <option value="Ruby">Ruby</option>
+                                <option value="PHP">PHP</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="frontendLang">Frontend язык</label>
+                            <select id="frontendLang">
+                                <option value="JavaScript">JavaScript</option>
+                                <option value="TypeScript">TypeScript</option>
+                                <option value="CSharp">C#</option>
+                                <option value="Python">Python</option>
+                                <option value="Java">Java</option>
+                                <option value="Go">Go</option>
+                                <option value="Ruby">Ruby</option>
+                                <option value="PHP">PHP</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label for="excludePatterns">🚫 Исключить (через запятую)</label>
+                            <input type="text" id="excludePatterns" placeholder="*.Designer.cs, Forms, Views" />
+                            <div class="hint">Паттерны исключённых файлов/папок</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="includePatterns">✅ Включить только (через запятую)</label>
+                            <input type="text" id="includePatterns" placeholder="Domain, Services" />
+                            <div class="hint">Оставить только файлы, соответствующие паттернам</div>
+                        </div>
+                    </div>
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label for="outputDir">📤 Папка вывода</label>
+                            <input type="text" id="outputDir" placeholder="/path/to/output" />
+                            <div class="hint">Куда сохранить сгенерированный отчёт</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="collapseThreshold">📏 Порог сворачивания методов</label>
+                            <input type="number" id="collapseThreshold" value="50" min="10" max="500" />
+                            <div class="hint">Методы длиннее этого числа строк будут свёрнуты</div>
+                        </div>
+                    </div>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="removeComments" />
+                            <span>🗑️ Удалить комментарии</span>
+                        </label>
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="keepEmptyLines" checked />
+                            <span>↕️ Сохранять пустые строки</span>
+                        </label>
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="consolidateUsings" checked />
+                            <span>📦 Консолидировать using</span>
+                        </label>
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="generateQuickLinks" checked />
+                            <span>🔗 Генерировать Quick Links</span>
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-primary" id="buildCmdBtn">▶️ Собрать команду</button>
+                        <button type="button" class="btn btn-success" id="saveConfigBtn">💾 Сохранить конфигурацию</button>
+                        <button type="button" class="btn" id="loadLastBtn">📂 Загрузить последнюю</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+
+        <!-- COMMAND PREVIEW -->
+        <section class="card" style="margin-top:24px;" aria-labelledby="cmdTitle">
+            <div class="card-title" id="cmdTitle">
+                <span class="icon" aria-hidden="true">💻</span> Сгенерированная команда
+            </div>
+            <div class="command-preview" id="commandPreview">
+                <span class="prompt">$</span>
+                <span class="cmd" id="cmdDisplay">./run.sh --help</span>
+                <button class="copy-btn" id="copyCmdBtn" aria-label="Копировать команду">
+                    <span aria-hidden="true">📋</span> Копировать
+                </button>
+            </div>
+        </section>
+
+        <!-- HISTORY -->
+        <section class="card" style="margin-top:24px;" aria-labelledby="historyTitle">
+            <div class="history-toggle" id="historyToggle" role="button" tabindex="0" aria-expanded="false">
+                <span class="history-label" id="historyTitle">
+                    <span aria-hidden="true">📜</span> История вызовов и конфигураций
+                    <span class="count" id="historyCount">0</span>
+                </span>
+                <span class="history-arrow" id="historyArrow" aria-hidden="true">▾</span>
+            </div>
+            <div class="history-list" id="historyList">
+                <div id="historyContainer">
+                    <div class="history-empty">Пока нет сохранённых конфигураций</div>
+                </div>
+                <div class="history-actions">
+                    <button class="btn btn-danger btn-sm" id="clearHistoryBtn">
+                        <span aria-hidden="true">🗑️</span> Очистить историю
+                    </button>
+                    <button class="btn btn-sm" id="exportHistoryBtn">
+                        <span aria-hidden="true">📤</span> Экспорт JSON
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TOAST -->
+        <div class="toast-container" id="toastContainer" role="status" aria-live="polite"></div>
+    </main>
+
+    <script type="module" src="modules/app.js"></script>
+</body>
+</html>
