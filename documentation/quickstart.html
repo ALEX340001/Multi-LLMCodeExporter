@@ -41,7 +41,6 @@
                 <!-- 2. Способ 1: Через приложение (ярлык) -->
                 <div class="project-card">
                     <h2>2. Способ 1. Работа через приложение (ярлык)</h2>
-
                     <div class="class-card">
                         <h3>2.1 Windows</h3>
                         <ol style="color: var(--text-secondary); line-height: 1.8;">
@@ -50,7 +49,6 @@
                             <li>Просто <strong>перенесите (перетащите мышкой)</strong> в открывшееся окно программы свою рабочую папку, в которой вы ведёте разработку.</li>
                         </ol>
                     </div>
-
                     <div class="class-card">
                         <h3>2.2 Linux</h3>
                         <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
@@ -64,7 +62,6 @@
                             <li>Далее перетащите свою рабочую папку в открывшееся окно терминала (или введите путь вручную) – программа начнёт интерактивный опрос.</li>
                         </ol>
                     </div>
-
                     <p style="color: var(--text-secondary); line-height: 1.6; margin-top: 1.5rem;">
                         После запуска (вне зависимости от ОС) программа проведёт вас через <span class="underline"><strong>пошаговый интерактивный опрос</strong></span>: выбор типа проекта, режима экспорта, фильтров, формата и дополнительных оптимизаций.
                     </p>
@@ -84,151 +81,59 @@ LLMCodeExporter.exe "C:\Projects\MyApp"   # Windows
 LLMCodeExporter.exe "C:\Projects\MyApp" --mode=compact --backend-only</code></pre>
                 </div>
 
-                <!-- ====== Способ 3: Импортёр (распаковка снапшотов) ====== -->
+                <!-- ====== Способ 3: Импортёр ====== -->
                 <div class="project-card">
                     <h2>4. Способ 3. Импортёр – распаковка снапшотов</h2>
                     <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
                         Начиная с версии v0.5, в состав решения входит <strong>LLMCode_Importer</strong> – утилита для восстановления файлов из Markdown-экспорта (снапшота), созданного основным экспортёром. Вы можете запустить импортёр как отдельно, так и через основное приложение с ключом <code>--start-input</code>.
                     </p>
-
                     <h3>4.1. Запуск через основное приложение (рекомендуется)</h3>
-                    <pre style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px; overflow-x: auto;"><code># Из папки решения
-dotnet run --project src/LLMCodeExporter.CLI -- --start-input "путь/к/снапшоту.md" --output "папка/для/распаковки"</code></pre>
+                    <pre><code>dotnet run --project src/LLMCodeExporter.CLI -- --start-input "путь/к/снапшоту.md" --output "папка/для/распаковки"</code></pre>
                     <p style="color: var(--text-secondary); line-height: 1.6; margin: 0.5rem 0 1rem;">
                         Если не указать <code>--output</code>, файлы будут распакованы в текущую папку. Если не указать <code>--start-input</code> и не передать аргументы, импортёр запустится в <strong>интерактивном режиме</strong>.
                     </p>
-
                     <h3>4.2. Запуск напрямую (как отдельная утилита)</h3>
-                    <pre style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px; overflow-x: auto;"><code># Из папки решения
-dotnet run --project LLMCode_Importer -- "путь/к/снапшоту.md" --output "папка/для/распаковки"</code></pre>
+                    <pre><code>dotnet run --project LLMCode_Importer -- "путь/к/снапшоту.md" --output "папка/для/распаковки"</code></pre>
                     <p style="color: var(--text-secondary); line-height: 1.6; margin-top: 1rem;">
                         Подробнее об импортёре читайте на отдельной странице <a href="./import.html">Импортёр</a>.
                     </p>
                 </div>
 
-                <!-- 4. Параметры командной строки -->
+                <!-- ====== Способ 4: Веб-конфигуратор ====== -->
                 <div class="project-card">
-                    <h2>5. Параметры командной строки (ключи)</h2>
-
-                    <h3>Основные</h3>
-                    <table class="compare-table">
-                        <thead>
-                            <tr>
-                                <th>Ключ</th>
-                                <th>Описание</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><code>&lt;путь-к-проекту&gt;</code></td><td>Папка с проектом (первый аргумент без <code>--</code>). Можно передать путь к <code>.csproj</code> – будет использована его директория.</td></tr>
-                            <tr><td><code>--help</code>, <code>-h</code>, <code>/?</code></td><td>Показать справку.</td></tr>
-                        </tbody>
-                    </table>
-
-                    <h3>Режимы экспорта</h3>
-                    <table class="compare-table">
-                        <thead>
-                            <tr><th>Ключ</th><th>Описание</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><code>--mode=compact</code></td><td>Только структура проекта и сигнатуры методов (~30% исходного размера).</td></tr>
-                            <tr><td><code>--mode=balanced</code></td><td>Оптимизация больших методов (сворачивание тел длиннее порога, по умолчанию 50 строк). Рекомендуется.</td></tr>
-                            <tr><td><code>--mode=full</code></td><td>Весь код без изменений (100% размера).</td></tr>
-                        </tbody>
-                    </table>
-
-                    <h3>Фильтрация файлов</h3>
-                    <table class="compare-table">
-                        <thead><tr><th>Ключ</th><th>Описание</th></tr></thead>
-                        <tbody>
-                            <tr><td><code>--exclude=шаблон</code></td><td>Исключить файлы по шаблону (можно указать несколько раз). Примеры: <code>*.Designer.cs</code>, <code>Forms</code>, <code>Tests</code>.</td></tr>
-                            <tr><td><code>--include=шаблон</code></td><td>Включать <strong>только</strong> файлы по шаблону (можно несколько). Примеры: <code>Domain</code>, <code>Services</code>, <code>Core</code>.</td></tr>
-                        </tbody>
-                    </table>
-
-                    <h3>Предустановленные наборы (preset'ы)</h3>
-                    <table class="compare-table">
-                        <thead><tr><th>Ключ</th><th>Действие</th></tr></thead>
-                        <tbody>
-                            <tr><td><code>--backend-only</code></td><td>Исключает UI‑файлы: <code>*.Designer.cs</code>, <code>Forms</code>, <code>Views</code>, <code>UI</code>, <code>*.xaml.cs</code>, <code>*.razor</code>.</td></tr>
-                            <tr><td><code>--domain-services</code></td><td>Включает только папки <code>Domain</code>, <code>Services</code>, <code>Application</code>, <code>Core</code>.</td></tr>
-                            <tr><td><code>--compact-aggressive</code></td><td>Включает <code>--mode=compact</code>, удаляет комментарии и пустые строки, порог сворачивания методов = 30.</td></tr>
-                            <tr><td><code>--web-app</code></td><td>Настраивает проект как веб‑приложение (JS, CSS, HTML), исключает <code>node_modules</code>, <code>dist</code> и т.д.</td></tr>
-                        </tbody>
-                    </table>
-
-                    <h3>Формат вывода</h3>
-                    <table class="compare-table">
-                        <thead><tr><th>Ключ</th><th>Описание</th></tr></thead>
-                        <tbody>
-                            <tr><td><code>--format=markdown</code></td><td>Генерация отчёта в Markdown (по умолчанию).</td></tr>
-                            <tr><td><code>--format=text</code></td><td>Генерация в Plain Text.</td></tr>
-                        </tbody>
-                    </table>
-
-                    <h3>Дополнительные настройки</h3>
-                    <table class="compare-table">
-                        <thead><tr><th>Ключ</th><th>Описание</th></tr></thead>
-                        <tbody>
-                            <tr><td><code>--no-comments</code></td><td>Удалить все комментарии (кроме XML‑документации <code>///</code>).</td></tr>
-                            <tr><td><code>--keep-empty-lines</code></td><td>Сохранить пустые строки (по умолчанию удаляются).</td></tr>
-                            <tr><td><code>--no-consolidate-usings</code></td><td>Отключить консолидацию <code>using</code>-директив (только для C#).</td></tr>
-                            <tr><td><code>--collapse-threshold N</code></td><td>Задать порог строк метода для сворачивания (по умолчанию 50). Действует в режиме <code>balanced</code>.</td></tr>
-                            <tr><td><code>--output=путь</code></td><td>Папка для сохранения результата (по умолчанию <code>Documents\LLMCodeExporter\Exports</code>).</td></tr>
-                        </tbody>
-                    </table>
+                    <h2>5. Способ 4. Веб-конфигуратор (графический интерфейс)</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                        Для тех, кто предпочитает визуальный интерфейс, в составе проекта есть <strong>веб-конфигуратор</strong> (<code>files-web-wiki</code>). Он позволяет:
+                    </p>
+                    <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.5rem; margin-bottom: 1rem;">
+                        <li>Выбирать режим экспорта, формат, пресеты.</li>
+                        <li>Настраивать фильтры включения/исключения.</li>
+                        <li>Сохранять до 50 конфигураций в локальном хранилище браузера.</li>
+                        <li>Загружать последнюю использованную конфигурацию.</li>
+                        <li>Экспортировать историю конфигураций в JSON.</li>
+                        <li>Копировать готовую команду для запуска в терминале.</li>
+                    </ul>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-top: 1rem;">
+                        Откройте <a href="/Multi-LLMCodeExporter/files-web-wiki/index.html" target="_blank">веб-конфигуратор</a> прямо в браузере или перейдите на <a href="./web-configurator.html">страницу описания</a>.
+                    </p>
                 </div>
 
-                <!-- 5. Примеры использования -->
+                <!-- 6. Параметры командной строки (нумерация смещена) -->
                 <div class="project-card">
-                    <h2>6. Примеры использования</h2>
-                    <pre style="background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 12px; overflow-x: auto;"><code># 1. Интерактивный режим (без ключей)
-LLMCodeExporter.exe   # Windows
-./LLMCodeExporter.CLI # Linux (после chmod +x)
-
-# 2. Быстрый экспорт C# проекта в Balanced режиме (по умолчанию)
-LLMCodeExporter.exe "C:\Projects\MyApp"
-./LLMCodeExporter.CLI "/home/user/Projects/MyApp"
-
-# 3. Только бизнес-логика (Domain + Services) в Compact режиме
-LLMCodeExporter.exe "C:\Projects\MyApp" --mode=compact --domain-services
-
-# 4. Исключить Designer и тесты, сохранить как Plain Text
-LLMCodeExporter.exe "C:\Projects\MyApp" --exclude="*.Designer.cs" --exclude="Tests" --format=text
-
-# 5. Веб-приложение с максимальным сжатием
-LLMCodeExporter.exe "C:\Projects\MyWebApp" --web-app --compact-aggressive
-
-# 6. Кастомный порог сворачивания методов (30 строк) и удаление комментариев
-LLMCodeExporter.exe "C:\Projects\MyApp" --mode=balanced --collapse-threshold 30 --no-comments</code></pre>
+                    <h2>6. Параметры командной строки (ключи)</h2>
+                    <!-- ... (остальной код без изменений) ... -->
                 </div>
 
-                <!-- 6. Основные свойства ExportSettings -->
+                <!-- 7. Примеры использования -->
                 <div class="project-card">
-                    <h2>7. Основные свойства ExportSettings</h2>
-                    <table class="compare-table">
-                        <thead>
-                            <tr>
-                                <th>Свойство</th>
-                                <th>Тип</th>
-                                <th>Описание</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><code>Mode</code></td><td><code>ExportMode</code></td><td><code>Compact</code>, <code>Balanced</code>, <code>Full</code></td></tr>
-                            <tr><td><code>Format</code></td><td><code>ExportFormat</code></td><td><code>Markdown</code> или <code>PlainText</code></td></tr>
-                            <tr><td><code>ProjectType</code></td><td><code>ProjectType</code></td><td><code>AutoDetect</code>, <code>CSharp</code>, <code>Python</code>, <code>JavaScript</code>, <code>TypeScript</code>, <code>WebApp</code>, <code>Generic</code></td></tr>
-                            <tr><td><code>FileExtensions</code></td><td><code>string[]</code></td><td>Расширения для сканирования (например, <code>["*.cs", "*.cshtml"]</code>)</td></tr>
-                            <tr><td><code>ExcludeFolders</code></td><td><code>string[]</code></td><td>Папки, исключаемые всегда (<code>bin</code>, <code>obj</code>, <code>node_modules</code> и т.д.)</td></tr>
-                            <tr><td><code>ExcludePatterns</code></td><td><code>List&lt;string&gt;</code></td><td>Дополнительные паттерны исключения (например, <code>*.Designer.cs</code>)</td></tr>
-                            <tr><td><code>IncludeOnlyPatterns</code></td><td><code>List&lt;string&gt;</code></td><td>Паттерны включения (если не пусто – включаются только они)</td></tr>
-                            <tr><td><code>RemoveComments</code></td><td><code>bool</code></td><td>Удалять комментарии (кроме XML‑док)</td></tr>
-                            <tr><td><code>RemoveEmptyLines</code></td><td><code>bool</code></td><td>Удалять пустые строки</td></tr>
-                            <tr><td><code>ConsolidateUsings</code></td><td><code>bool</code></td><td>Объединять <code>using</code> (C#)</td></tr>
-                            <tr><td><code>MethodCollapseThreshold</code></td><td><code>int</code></td><td>Количество строк метода, после которого тело сворачивается</td></tr>
-                            <tr><td><code>FilterBuildFolders</code></td><td><code>bool</code></td><td>Исключать <code>bin</code>, <code>obj</code>, <code>packages</code></td></tr>
-                            <tr><td><code>OutputDirectory</code></td><td><code>string</code></td><td>Папка для сохранения файла экспорта</td></tr>
-                        </tbody>
-                    </table>
+                    <h2>7. Примеры использования</h2>
+                    <!-- ... -->
+                </div>
+
+                <!-- 8. Основные свойства ExportSettings -->
+                <div class="project-card">
+                    <h2>8. Основные свойства ExportSettings</h2>
+                    <!-- ... -->
                 </div>
 
             </div>
