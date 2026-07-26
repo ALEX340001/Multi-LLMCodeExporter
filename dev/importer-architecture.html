@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архитектура импортёра — Multi‑LLMCodeExporter</title>
+    <meta name="description" content="Детальное описание архитектуры LLMCode_Importer: классы, методы, потоки данных, интеграция с CLI.">
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/navigation.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="../css/clock.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/dev.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        /* Дополнительные стили для этой страницы */
+        .class-diagram {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .class-diagram .mermaid {
+            text-align: center;
+        }
+        .method-signature {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-input);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            display: inline-block;
+            margin: 0.2rem 0;
+        }
+        .flow-step {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            margin: 0.8rem 0;
+            padding: 0.8rem 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+        .flow-step .num {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 1.2rem;
+            min-width: 2rem;
+        }
+        .flow-step .desc {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div id="google_translate_element" style="display:none;"></div>
+    <div class="nav-wrapper"></div>
+    <main>
+        <div id="clocks-container" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></div>
+        <div class="container">
+            <div class="page-content">
+                <h1 class="page-title">Архитектура импортёра (LLMCode_Importer)</h1>
+
+                <div class="inline-card" style="margin-bottom: 2rem;">
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
+                        <strong>LLMCode_Importer</strong> – это утилита командной строки для распаковки файлов из Markdown-снапшота, созданного основным экспортёром. 
+                        Она восстанавливает исходную структуру проекта, сохраняя вложенность папок и содержимое файлов. 
+                        Импортёр может работать как самостоятельное приложение, так и вызываться через основной CLI с флагом <code>--start-input</code>.
+                    </p>
+                </div>
+
+                <!-- 1. Общая структура -->
+                <div class="project-card">
+                    <h2>1. Общая структура проекта</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                        Импортёр состоит из следующих ключевых классов (все находятся в пространстве имён <code>LLMCode_Importer</code>):
+                    </p>
+                    <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.5rem;">
+                        <li><strong>Program</strong> – точка входа, обрабатывает аргументы, запускает интерактивный или CLI-режим.</li>
+                        <li><strong>SnapshotUnpacker</strong> – основной класс, выполняющий распаковку: парсит Markdown, создаёт файлы и папки.</li>
+                        <li><strong>UnpackerOptions</strong> – record с настройками: выходная папка, перезапись, путь к снапшоту по умолчанию.</li>
+                        <li><strong>UnpackResult</strong> – record с результатом: количество распакованных файлов и список путей.</li>
+                        <li><strong>ConsoleHelper</strong> – статические методы для цветного вывода, интерактивных запросов и справки.</li>
+                    </ul>
+
+                    <!-- Диаграмма классов (Mermaid) -->
+                    <div class="class-diagram">
+                        <h3>Диаграмма классов</h3>
+                        <div class="mermaid">
+classDiagram
+    class Program {
+        +Main(string[] args) Task~int~
+        -RunInteractiveAsync() Task~int~
+        -RunCliAsync(string[] args) Task~int~
+        -UnpackCoreAsync(string snapshotPath, string outputRoot, bool overwrite) Task~int~
+    }
+    class SnapshotUnpacker {
+        -UnpackerOptions _options
+        +UnpackAsync(string snapshotPath) Task~UnpackResult~
+        -static Regex FileHeaderRegex
+    }
+    class UnpackerOptions {
+        +string OutputRoot
+        +bool Overwrite
+        +string? DefaultSnapshotPath
+    }
+    class UnpackResult {
+        +int ExtractedCount
+        +string OutputRoot
+        +IReadOnlyList~string~ ExtractedFiles
+    }
+    class ConsoleHelper {
+        +PrintHeader()
+        +PrintHelp()
+        +PrintError(string message)
+        +PrintWarning(string message)
+        +PrintInfo(string message)
+        +PrintSuccess(string message)
+        +AskForSnapshotPath() string
+        +AskForOutputRoot() string
+        +AskForOverwrite() bool
+    }
+    Program --> SnapshotUnpacker : создаёт
+    SnapshotUnpacker --> UnpackerOptions : использует
+    SnapshotUnpacker --> UnpackResult : возвращает
+    Program --> ConsoleHelper : использует
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Поток выполнения -->
+                <div class="project-card">
+                    <h2>2. Поток выполнения</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                        Импортёр может быть запущен в двух режимах:
+                    </p>
+
+                    <h3>2.1 Интерактивный режим (без аргументов)</h3>
+                    <div class="flow-step">
+                        <span class="num">1</span>
+                        <div class="desc"><code>Program.Main()</code> вызывает <code>RunInteractiveAsync()</code>.</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">2</span>
+                        <div class="desc"><code>ConsoleHelper.PrintHeader()</code> – вывод заголовка.</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">3</span>
+                        <div class="desc"><code>ConsoleHelper.AskForSnapshotPath()</code> – запрос пути к снапшоту с валидацией существования файла.</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">4</span>
+                        <div class="desc"><code>ConsoleHelper.AskForOutputRoot()</code> – запрос выходной папки (по умолчанию текущая).</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">5</span>
+                        <div class="desc"><code>ConsoleHelper.AskForOverwrite()</code> – запрос флага перезаписи (по умолчанию <code>true</code>).</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">6</span>
+                        <div class="desc">Создаётся <code>UnpackerOptions</code> и экземпляр <code>SnapshotUnpacker</code>.</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">7</span>
+                        <div class="desc">Вызов <code>UnpackAsync(snapshotPath)</code> – основной процесс распаковки.</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">8</span>
+                        <div class="desc">Вывод результата через <code>ConsoleHelper.PrintSuccess()</code>.</div>
+                    </div>
+
+                    <h3 style="margin-top: 1.5rem;">2.2 CLI-режим (с аргументами)</h3>
+                    <div class="flow-step">
+                        <span class="num">1</span>
+                        <div class="desc"><code>Program.Main()</code> вызывает <code>RunCliAsync(args)</code>.</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">2</span>
+                        <div class="desc">Парсинг аргументов: <code>--output</code>, <code>--config</code>, <code>--overwrite</code>/<code>--no-overwrite</code>, <code>--help</code>.</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">3</span>
+                        <div class="desc">Если указан <code>--config</code>, загружается <code>unpacker.settings.json</code> (параметры CLI имеют приоритет).</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">4</span>
+                        <div class="desc">Создаются <code>UnpackerOptions</code> и <code>SnapshotUnpacker</code>.</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">5</span>
+                        <div class="desc">Вызов <code>UnpackAsync(snapshotPath)</code>.</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">6</span>
+                        <div class="desc">Вывод результата в консоль.</div>
+                    </div>
+
+                    <h3 style="margin-top: 1.5rem;">2.3 Запуск через основной CLI (<code>--start-input</code>)</h3>
+                    <div class="flow-step">
+                        <span class="num">1</span>
+                        <div class="desc">Пользователь вызывает <code>LLMCodeExporter.CLI --start-input snapshot.md --output ./restored</code>.</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">2</span>
+                        <div class="desc">Основной CLI определяет первый аргумент <code>--start-input</code> и передаёт управление <code>LLMCode_Importer.Program.Main()</code> с остальными аргументами.</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">3</span>
+                        <div class="desc">Импортёр выполняется в CLI-режиме (или интерактивном, если аргументов после <code>--start-input</code> нет).</div>
+                    </div>
+                    <div class="flow-step">
+                        <span class="num">4</span>
+                        <div class="desc">После завершения импортёра управление возвращается основному CLI, который завершает работу.</div>
+                    </div>
+                </div>
+
+                <!-- 3. Ключевые методы -->
+                <div class="project-card">
+                    <h2>3. Ключевые методы</h2>
+
+                    <div class="class-card">
+                        <h3>3.1 <code>SnapshotUnpacker.UnpackAsync(string snapshotPath)</code></h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Назначение:</strong></span> Основной метод распаковки.
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Алгоритм:</strong></span>
+                        </p>
+                        <ol style="margin-left: 1.5rem; color: var(--text-secondary); line-height: 1.8;">
+                            <li>Проверяет существование файла снапшота; если нет – выбрасывает <code>FileNotFoundException</code>.</li>
+                            <li>Читает всё содержимое файла асинхронно (<code>File.ReadAllTextAsync</code>).</li>
+                            <li>Применяет регулярное выражение <code>FileHeaderRegex</code> для поиска блоков вида:
+                                <pre style="background: var(--bg-input); padding: 0.5rem; border-radius: 6px; font-size: 0.85rem;">
+## 📄 `относительный/путь/к/файлу`
+```(язык)
+содержимое
+```</pre>
+                            </li>
+                            <li>Для каждого совпадения:
+                                <ul>
+                                    <li>Извлекает относительный путь и код.</li>
+                                    <li>Нормализует путь (заменяет <code>/</code> на разделитель ОС).</li>
+                                    <li>Создаёт все необходимые директории (<code>Directory.CreateDirectory</code>).</li>
+                                    <li>Если файл уже существует и <code>_options.Overwrite == false</code> – пропускает с уведомлением.</li>
+                                    <li>Иначе записывает код в файл (<code>File.WriteAllTextAsync</code>).</li>
+                                </ul>
+                            </li>
+                            <li>Возвращает <code>UnpackResult</code> с количеством распакованных файлов и списком путей.</li>
+                        </ol>
+                    </div>
+
+                    <div class="class-card">
+                        <h3>3.2 <code>Program.Main(string[] args)</code></h3>
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem;">
+                            <span class="underline"><strong>Назначение:</strong></span> Точка входа.
+                        </p>
+                        <ul style="color: var(--text-secondary); line-height: 1.8; margin-left: 1.5rem;">
+                            <li>Если <code>args.Length == 1</code> и аргумент – <code>--help</code>, <code>-h</code> или <code>/?</code> – выводит справку и завершает работу.</li>
+                            <li>Если <code>args.Length == 0</code> – запускает интерактивный режим (<code>RunInteractiveAsync</code>).</li>
+                            <li>Иначе – запускает CLI-режим (<code>RunCliAsync</code>).</li>
+                        </ul>
+                    </div>
+
+                    <div class="class-card">
+                        <h3>3.3 <code>ConsoleHelper</code> – вспомогательные методы</h3>
+                        <ul style="color: var(--text-secondary); line-height: 1.8; margin-left: 1.5rem;">
+                            <li><code>PrintHeader()</code> – выводит заголовок с логотипом.</li>
+                            <li><code>PrintHelp()</code> – выводит справку по использованию.</li>
+                            <li><code>AskForSnapshotPath()</code> – интерактивный запрос пути с проверкой существования файла.</li>
+                            <li><code>AskForOutputRoot()</code> – запрос выходной папки с созданием, если её нет.</li>
+                            <li><code>AskForOverwrite()</code> – запрос флага перезаписи (Y/n).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 4. Интеграция с основным CLI -->
+                <div class="project-card">
+                    <h2>4. Интеграция с основным CLI (флаг <code>--start-input</code>)</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                        В основном CLI (<code>LLMCodeExporter.CLI</code>) добавлена проверка первого аргумента. Если он равен <code>--start-input</code>, то управление передаётся импортёру:
+                    </p>
+                    <pre style="background: var(--bg-input); padding: 1rem; border-radius: 8px; color: var(--text-primary); overflow-x: auto;">
+<code>// В Program.cs основного CLI
+if (args.Length > 0 && args[0] == "--start-input")
+{
+    var importerArgs = args.Skip(1).ToArray();
+    return await LLMCode_Importer.Program.Main(importerArgs);
+}</code></pre>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-top: 1rem;">
+                        Это позволяет пользователям использовать единую точку входа для экспорта и импорта, не запоминая отдельные команды.
+                    </p>
+                </div>
+
+                <!-- 5. Логирование -->
+                <div class="project-card">
+                    <h2>5. Логирование</h2>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                        Импортёр использует тот же <strong>статический класс <code>Logger</code></strong>, что и основное приложение (из <code>LLMCodeExporter.Infrastructure.Utils</code>).
+                        Это обеспечивает единый формат логов и хранение в одной папке (<code>Документы/LLMCodeExporter/Logs/</code>).
+                    </p>
+                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                        Все сообщения импортёра записываются в тот же файл сессии, что и логи основного CLI (если запущен через <code>--start-input</code>), что упрощает отслеживание полного цикла работы.
+                    </p>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">
+                        Пример логирования в импортёре:
+                    </p>
+                    <pre style="background: var(--bg-input); padding: 1rem; border-radius: 8px; color: var(--text-primary); overflow-x: auto;">
+<code>Logger.Log($"Начало распаковки снапшота: {snapshotPath}");
+// ...
+Logger.Log($"Распакован файл: {relativePath}");
+// ...
+Logger.LogSuccess($"Распаковано файлов: {result.ExtractedCount}");</code></pre>
+                </div>
+
+                <!-- 6. Примеры использования -->
+                <div class="project-card">
+                    <h2>6. Примеры использования</h2>
+                    <h3>Интерактивный режим</h3>
+                    <pre style="background: var(--bg-input); padding: 1rem; border-radius: 8px; color: var(--text-primary); overflow-x: auto;">
+<code># Запуск без аргументов
+LLMCode_Importer
+
+# После запуска:
+# 1. Укажите путь к снапшоту (например, snapshot.md)
+# 2. Укажите выходную папку (Enter для текущей)
+# 3. Выберите, перезаписывать ли файлы (Y/n)</code></pre>
+
+                    <h3>CLI-режим</h3>
+                    <pre style="background: var(--bg-input); padding: 1rem; border-radius: 8px; color: var(--text-primary); overflow-x: auto;">
+<code># Базовый запуск
+LLMCode_Importer snapshot.md --output ./restored
+
+# С запретом перезаписи
+LLMCode_Importer snapshot.md --no-overwrite
+
+# С указанием конфигурационного файла
+LLMCode_Importer snapshot.md --config unpacker.settings.json</code></pre>
+
+                    <h3>Через основной CLI</h3>
+                    <pre style="background: var(--bg-input); padding: 1rem; border-radius: 8px; color: var(--text-primary); overflow-x: auto;">
+<code>LLMCodeExporter.CLI --start-input snapshot.md --output ./restored</code></pre>
+                </div>
+
+                <!-- 7. Ссылки на связанные страницы -->
+                <div class="project-card">
+                    <h2>7. Связанные страницы</h2>
+                    <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.5rem;">
+                        <li><a href="/dev/projects.html">Обзор проектов</a> – место импортёра в экосистеме.</li>
+                        <li><a href="/dev/dependencies.html">Карта связывания</a> – граф вызовов с участием импортёра.</li>
+                        <li><a href="/dev/logging.html">Логирование</a> – как логируются события импортёра.</li>
+                        <li><a href="/documentation/import.html">Документация импортёра</a> – для пользователей.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <script src="../index.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+        });
+    </script>
+</body>
+</html>
