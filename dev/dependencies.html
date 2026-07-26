@@ -5,28 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Карта связывания — Multi‑LLMCodeExporter</title>
     <meta name="description" content="Блок-схема вызовов методов и классов с интерактивным зумом.">
-
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-
-
-
-
-
-<link rel="stylesheet" href="../css/variables.css">   
-<link rel="stylesheet" href="../css/reset.css">
-<link rel="stylesheet" href="../css/base.css">
-<link rel="stylesheet" href="../css/layout.css">
-<link rel="stylesheet" href="../css/navigation.css">
-<link rel="stylesheet" href="../css/components.css">
-<link rel="stylesheet" href="../css/utilities.css">
-<link rel="stylesheet" href="../css/clock.css">
-<link rel="stylesheet" href="../css/home.css">
-<link rel="stylesheet" href="../css/dev.css">   
-
-     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
-
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/navigation.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/utilities.css">
+    <link rel="stylesheet" href="../css/clock.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/dev.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        /* (стили остаются без изменений, как в оригинале) */
         .project-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -51,8 +43,6 @@
             text-decoration: underline;
             text-underline-offset: 0.2em;
         }
-
-        /* Обёртка диаграммы */
         .mermaid-wrapper {
             position: relative;
             border: 1px solid var(--card-border);
@@ -76,7 +66,6 @@
             transition: transform 0.05s ease-out;
             font-size: 16px;
         }
-
         .zoom-controls {
             position: absolute;
             bottom: 15px;
@@ -109,7 +98,6 @@
         .zoom-btn.reset-btn {
             font-size: 0.9rem;
         }
-
         .legend {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -137,6 +125,7 @@
         .dot-yellow { background: #fbbf24; }
         .dot-green { background: #34d399; }
         .dot-gray { background: #94a3b8; }
+        .dot-purple { background: #a78bfa; }
     </style>
 </head>
 <body>
@@ -150,16 +139,18 @@
 
                 <div class="inline-card" style="margin-bottom: 2rem;">
                     <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">
-                        На этой странице — <strong>блок-схема вызовов</strong>, где каждый узел — метод или класс. 
-                        Показаны оба режима: интерактивный (слева) и CLI (справа). Масштабируйте колёсиком мыши и перетаскивайте для изучения.
+                        На этой странице — <strong>блок-схема вызовов</strong>, охватывающая все основные компоненты экосистемы: 
+                        <strong>основной CLI</strong>, <strong>импортёр</strong> (<code>LLMCode_Importer</code>), <strong>веб-конфигуратор</strong> (<code>files-web-wiki</code>), 
+                        а также внутренние сервисы и утилиты. Масштабируйте колёсиком и перетаскивайте для детального изучения.
                     </p>
                 </div>
 
                 <div class="legend">
-                    <span class="legend-item"><span class="dot dot-blue"></span> Класс / Сервис</span>
-                    <span class="legend-item"><span class="dot dot-yellow"></span> Утилита / Helper</span>
-                    <span class="legend-item"><span class="dot dot-green"></span> Логгер / Вывод</span>
-                    <span class="legend-item"><span class="dot dot-gray"></span> Условное ветвление</span>
+                    <span class="legend-item"><span class="dot dot-blue"></span> CLI / Точка входа</span>
+                    <span class="legend-item"><span class="dot dot-yellow"></span> Сервисы / Бизнес-логика</span>
+                    <span class="legend-item"><span class="dot dot-green"></span> Утилиты / Helpers</span>
+                    <span class="legend-item"><span class="dot dot-gray"></span> Модели / Интерфейсы</span>
+                    <span class="legend-item"><span class="dot dot-purple"></span> Импортёр / Веб-конфигуратор</span>
                 </div>
 
                 <!-- Единая диаграмма -->
@@ -168,11 +159,11 @@
                     <div class="mermaid-wrapper" id="mainDiagram">
                         <div class="mermaid">
 graph TD
-    subgraph CLI_Layer["🖥️ CLI Layer"]
+    subgraph CLI_Layer["🖥️ CLI Layer (LLMCodeExporter.CLI)"]
         Main["Program.Main(args)"]
-        Parse["ParseArguments(args)"]
-        ShowHelp["ShowHelp()"]
-        NormPath["NormalizeProjectPath()"]
+        Parse["CliArgumentParser.Parse(args)"]
+        ShowHelp["HelpPrinter.Print()"]
+        NormPath["PathNormalizer.Normalize()"]
         InputPath["InputHelper.ReadDirectoryPath()"]
         MenuStats["InteractiveMenu.ShowProjectStats()"]
         MenuConfig["InteractiveMenu.ConfigureSettings()"]
@@ -180,15 +171,27 @@ graph TD
         ReadChoice["InputHelper.ReadChoice()"]
         ReadLine["InputHelper.ReadLine()"]
         ReadYesNo["InputHelper.ReadYesNo()"]
+        CliMode["CliModeHandler.Execute()"]
+        InteractiveMode["InteractiveModeHandler.Execute()"]
+        %% Новая точка входа для импортёра
+        StartInput["--start-input → LLMCode_Importer.Main()"]
     end
 
-    subgraph Infrastructure["⚙️ Infrastructure Layer"]
+    subgraph Importer_Layer["📦 Importer Layer (LLMCode_Importer)"]
+        ImporterMain["Program.Main(args)"]
+        Unpack["SnapshotUnpacker.UnpackAsync()"]
+        ParseImporter["ConsoleHelper / parse args"]
+        Options["UnpackerOptions"]
+        Result["UnpackResult"]
+    end
+
+    subgraph Infrastructure["⚙️ Infrastructure Layer (LLMCodeExporter.Infrastructure)"]
         Scanner["FileScanner.ScanProject()"]
         PM["PatternMatcher.FilterByPatterns()"]
         Export["ExportService.ExportProject()"]
         Optimizer["CodeOptimizer.OptimizeContent()"]
         Processor["CodeProcessor.ProcessCode()"]
-        Formatter["IOutputFormatter.FormatHeader/File/Footer"]
+        Formatter["IOutputFormatter.*"]
         ReadFile["ReadFileContentAsync()"]
         Extract["ExtractSignatures()"]
         Collapse["CollapseLongMethods()"]
@@ -196,6 +199,12 @@ graph TD
         ArchAnalyzer["ArchitectureAnalyzer.GenerateArchitectureOverview()"]
         DepAnalyzer["DependencyAnalyzer.GenerateDependencyGraph()"]
         StructBuilder["ProjectStructureBuilder.BuildHierarchicalTree()"]
+        LayerDetector["LayerDetector.DetectLayers()"]
+        PatternDetector["PatternDetector.DetectPatterns()"]
+        MetricsCollector["MetricsCollector.Collect()"]
+        AnnotationGen["AnnotationGenerator.GenerateAnnotations()"]
+        HybridAnalyzer["HybridProjectAnalyzer.AnalyzeProject()"]
+        PythonAnalyzer["PythonProjectAnalyzer.AnalyzeProject()"]
     end
 
     subgraph Core["🧩 Core (Models & Interfaces)"]
@@ -207,16 +216,30 @@ graph TD
         ICodeOptimizer["ICodeOptimizer"]
         IFileScanner["IFileScanner"]
         IProjectAnalyzer["IProjectAnalyzer"]
+        IExportSettings["IExportSettings"]
+        IExportService["IExportService"]
     end
 
-    subgraph External["🌐 External / User"]
+    subgraph WebConfig["🌐 Web Configurator (files-web-wiki)"]
+        WebApp["app.js (init)"]
+        WebProviders["providers.js"]
+        WebDOM["dom.js"]
+        WebGenerators["generators.js"]
+        WebClipboard["clipboard.js"]
+        WebUtils["utils.js"]
+        WebConfigModule["config.js"]
+    end
+
+    subgraph External["👤 External / User"]
         User["User"]
         Logger["Logger.Log()"]
         Console["Console.WriteLine()"]
+        Browser["Браузер"]
     end
 
-    %% Интерактивный поток
+    %% Основной поток (CLI)
     User -->|без аргументов| Main
+    User -->|с аргументами| Main
     Main --> Parse
     Parse -->|hasCliArgs=false| InputPath
     InputPath --> NormPath
@@ -236,18 +259,17 @@ graph TD
     Formatter --> DepAnalyzer
     Formatter --> StructBuilder
     Export --> ReadFile
-    ReadFile -->|содержимое| Optimizer
+    ReadFile --> Optimizer
     Optimizer -->|Mode=Compact| Extract
     Optimizer -->|Mode=Balanced| Collapse
     Optimizer --> Processor
     Processor --> Formatter
-    Formatter -->|FormatFile| Export
+    Formatter --> Export
     Export --> Logger
     Export -->|ExportResult| MenuShow
     MenuShow --> User
 
-    %% CLI поток
-    User -->|с аргументами| Main
+    %% CLI-режим
     Main --> Parse
     Parse -->|hasCliArgs=true| NormPath
     NormPath --> Scanner
@@ -270,25 +292,58 @@ graph TD
     Export -->|ExportResult| Console
     Console --> User
 
-    %% Связь слоёв через интерфейсы
+    %% Импортёр (--start-input)
+    Main -->|args[0] == "--start-input"| StartInput
+    StartInput --> ImporterMain
+    ImporterMain --> ParseImporter
+    ParseImporter --> Options
+    Options --> Unpack
+    Unpack --> Result
+    Result --> Console
+    Console --> User
+
+    %% Веб-конфигуратор (открывается в браузере)
+    User -->|открывает index.html| Browser
+    Browser --> WebApp
+    WebApp --> WebProviders
+    WebApp --> WebDOM
+    WebApp --> WebGenerators
+    WebApp --> WebClipboard
+    WebApp --> WebUtils
+    WebApp --> WebConfigModule
+    WebProviders -->|сохраняет/загружает| localStorage
+    WebGenerators -->|строит команду| CommandPreview
+    WebClipboard -->|копирует| ClipboardAPI
+
+    %% Связи через интерфейсы
     Scanner -.-> IFileScanner
     Export -.-> IOutputFormatter
+    Export -.-> IExportService
     Optimizer -.-> ICodeOptimizer
     Processor -.-> ICodeProcessor
-    Formatter -.-> IOutputFormatter
+    ArchAnalyzer --> LayerDetector
+    ArchAnalyzer --> PatternDetector
+    ArchAnalyzer --> MetricsCollector
+    ArchAnalyzer --> AnnotationGen
+    HybridAnalyzer -.-> IProjectAnalyzer
+    PythonAnalyzer -.-> IProjectAnalyzer
     ProjectInfo -.-> Core
     ExportSettings -.-> Core
     ExportResult -.-> Core
 
     classDef cli fill:#60a5fa,stroke:#2563eb,color:#fff
     classDef infra fill:#fbbf24,stroke:#d97706,color:#000
-    classDef core fill:#34d399,stroke:#059669,color:#000
+    classDef core fill:#94a3b8,stroke:#475569,color:#fff
+    classDef importer fill:#a78bfa,stroke:#7c3aed,color:#fff
+    classDef web fill:#34d399,stroke:#059669,color:#000
     classDef ext fill:#94a3b8,stroke:#475569,color:#fff
 
-    class Main,Parse,ShowHelp,NormPath,InputPath,MenuStats,MenuConfig,MenuShow,ReadChoice,ReadLine,ReadYesNo cli
-    class Scanner,PM,Export,Optimizer,Processor,Formatter,ReadFile,Extract,Collapse,NavGen,ArchAnalyzer,DepAnalyzer,StructBuilder infra
-    class ProjectInfo,ExportSettings,ExportResult,IOutputFormatter,ICodeProcessor,ICodeOptimizer,IFileScanner,IProjectAnalyzer core
-    class User,Logger,Console ext
+    class Main,Parse,ShowHelp,NormPath,InputPath,MenuStats,MenuConfig,MenuShow,ReadChoice,ReadLine,ReadYesNo,CliMode,InteractiveMode,StartInput cli
+    class Scanner,PM,Export,Optimizer,Processor,Formatter,ReadFile,Extract,Collapse,NavGen,ArchAnalyzer,DepAnalyzer,StructBuilder,LayerDetector,PatternDetector,MetricsCollector,AnnotationGen,HybridAnalyzer,PythonAnalyzer infra
+    class ProjectInfo,ExportSettings,ExportResult,IOutputFormatter,ICodeProcessor,ICodeOptimizer,IFileScanner,IProjectAnalyzer,IExportSettings,IExportService core
+    class ImporterMain,Unpack,ParseImporter,Options,Result importer
+    class WebApp,WebProviders,WebDOM,WebGenerators,WebClipboard,WebUtils,WebConfigModule web
+    class User,Logger,Console,Browser ext
                         </div>
                         <div class="zoom-controls">
                             <button class="zoom-btn" id="zoomIn" title="Приблизить">+</button>
@@ -298,15 +353,17 @@ graph TD
                     </div>
                 </div>
 
-                <!-- Ожидания между слоями -->
+                <!-- Ожидания между слоями (обновлены) -->
                 <div class="project-card">
-                    <h2>Ожидания между слоями (Clean Architecture)</h2>
+                    <h2>Ожидания между слоями (Clean Architecture + интеграция)</h2>
                     <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.2rem; margin: 0;">
                         <li><span class="underline"><strong>CLI → Infrastructure:</strong></span> ожидает, что <code>FileScanner</code> вернёт <code>ProjectInfo</code> с корректными списками файлов. Ожидает, что <code>ExportService</code> вернёт <code>ExportResult</code>.</li>
                         <li><span class="underline"><strong>Infrastructure → Core:</strong></span> использует модели и интерфейсы Core. <strong>Не ожидает</strong> никакой логики от Core — только данные и контракты.</li>
-                        <li><span class="underline"><strong>ExportService → CodeOptimizer / CodeProcessor:</strong></span> ожидает, что код будет обработан без ошибок. <strong>Не знает</strong> о внутренней реализации этих классов.</li>
-                        <li><span class="underline"><strong>MarkdownFormatter → Утилиты:</strong></span> ожидает от утилит готовые строки (дерево, граф, статистику). Не заботится о том, как они это делают.</li>
-                        <li><span class="underline"><strong>PatternMatcher → FileScanner:</strong></span> ожидает, что паттерны будут корректно преобразованы в регулярные выражения (wildcard → regex).</li>
+                        <li><span class="underline"><strong>CLI → Импортёр:</strong></span> при флаге <code>--start-input</code> CLI передаёт управление <code>LLMCode_Importer.Program.Main()</code> со всеми оставшимися аргументами.</li>
+                        <li><span class="underline"><strong>Импортёр → Файловая система:</strong></span> ожидает, что снапшот существует и содержит блоки кода с заголовками <code>## 📄 `путь`</code>.</li>
+                        <li><span class="underline"><strong>Веб-конфигуратор → localStorage:</strong></span> сохраняет и загружает историю конфигураций, настройки пути к <code>run.sh</code>.</li>
+                        <li><span class="underline"><strong>ArchitectureAnalyzer → Утилиты:</strong></span> использует <code>LayerDetector</code>, <code>PatternDetector</code>, <code>MetricsCollector</code> и <code>AnnotationGenerator</code> для построения полной картины архитектуры.</li>
+                        <li><span class="underline"><strong>HybridProjectAnalyzer:</strong></span> динамически комбинирует настройки бекенда и фронтенда, анализирует оба слоя и строит интеграционную диаграмму.</li>
                     </ul>
                 </div>
 
@@ -317,8 +374,9 @@ graph TD
                         Теперь, когда мы видим полную картину вызовов, переходим к деталям:
                     </p>
                     <ul style="color: var(--text-secondary); line-height: 1.8; padding-left: 1.2rem; margin: 0;">
-                        <li><a href="/dev/logging.html">Логирование</a> – где хранятся логи, как они пишутся и какие события фиксируются.</li>
-                        <li><a href="/dev/config.html">appsettings.json</a> – как настраивать приложение через конфигурационный файл.</li>
+                        <li><a href="/dev/logging.html">Логирование</a> – где хранятся логи, как они пишутся и какие события фиксируются (включая логи импортёра).</li>
+                        <li><a href="/dev/methods.html">Логика методов</a> – описание ключевых методов всех проектов.</li>
+                        <li><a href="/dev/projects.html">Обзор проектов</a> – структура и назначение каждой сборки.</li>
                     </ul>
                 </div>
             </div>
@@ -336,24 +394,19 @@ graph TD
                 curve: 'basis'
             }
         });
-
-        // Интерактивность
+        // (код интерактивности из оригинального файла, без изменений)
         function makeDraggable(wrapper, zoomInBtn, zoomOutBtn, resetBtn) {
             const mermaidDiv = wrapper.querySelector('.mermaid');
             if (!mermaidDiv) return;
-
-            let scale = 1.3; // начальное увеличение для читаемости
+            let scale = 1.3;
             let panX = 0, panY = 0;
             let isDragging = false;
             let startX, startY;
             let lastPanX = 0, lastPanY = 0;
-
             function updateTransform() {
                 mermaidDiv.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
             }
-
             setTimeout(updateTransform, 100);
-
             wrapper.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 const rect = wrapper.getBoundingClientRect();
@@ -367,7 +420,6 @@ graph TD
                 scale = clamped;
                 updateTransform();
             });
-
             wrapper.addEventListener('mousedown', (e) => {
                 if (e.target.closest('.zoom-controls')) return;
                 e.preventDefault();
@@ -378,21 +430,18 @@ graph TD
                 lastPanY = panY;
                 wrapper.style.cursor = 'grabbing';
             });
-
             window.addEventListener('mousemove', (e) => {
                 if (!isDragging) return;
                 panX = lastPanX + e.clientX - startX;
                 panY = lastPanY + e.clientY - startY;
                 updateTransform();
             });
-
             window.addEventListener('mouseup', () => {
                 if (isDragging) {
                     isDragging = false;
                     wrapper.style.cursor = 'grab';
                 }
             });
-
             zoomInBtn.addEventListener('click', () => {
                 const newScale = Math.min(scale * 1.25, 3.5);
                 panX -= (wrapper.clientWidth / 2) * (newScale / scale - 1);
@@ -400,7 +449,6 @@ graph TD
                 scale = newScale;
                 updateTransform();
             });
-
             zoomOutBtn.addEventListener('click', () => {
                 const newScale = Math.max(scale / 1.25, 0.3);
                 panX -= (wrapper.clientWidth / 2) * (1 - newScale / scale);
@@ -408,14 +456,12 @@ graph TD
                 scale = newScale;
                 updateTransform();
             });
-
             resetBtn.addEventListener('click', () => {
                 scale = 1.3;
                 panX = 0;
                 panY = 0;
                 updateTransform();
             });
-
             wrapper.addEventListener('dblclick', (e) => {
                 if (e.target.closest('.zoom-controls')) return;
                 scale = 1.3;
@@ -424,7 +470,6 @@ graph TD
                 updateTransform();
             });
         }
-
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const wrapper = document.getElementById('mainDiagram');
