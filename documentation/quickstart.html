@@ -27,22 +27,13 @@
             <div class="page-content">
                 <h1 class="page-title">Быстрый старт</h1>
 
-                <!-- 1. Общая информация -->
-                <div class="project-card">
-                    <h2>1. Общая информация</h2>
-                    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
-                        <span class="underline"><strong>Multi‑LLMCodeExporter</strong></span> — утилита командной строки с интерактивным режимом для экспорта исходного кода в формат, удобный для загрузки в большие языковые модели (LLM). Она сканирует проект, фильтрует файлы, оптимизирует код (удаляет комментарии, сворачивает длинные методы, консолидирует <code>using</code>-директивы) и генерирует единый отчёт в Markdown или Plain Text с древовидной структурой, статистикой по токенам и навигационными ссылками.
-                    </p>
-                    <p style="color: var(--text-secondary); line-height: 1.6;">
-                        Поддерживаются проекты на <strong>C# / .NET, Python, JavaScript/TypeScript</strong>, а также <strong>веб‑приложения</strong> (HTML, CSS, JS). Тип проекта определяется автоматически, но вы можете задать его вручную.
-                    </p>
-                </div>
+             
 
-                <!-- 2. Способ 1: Через приложение (ярлык) -->
+              
                 <div class="project-card">
-                    <h2>2. Способ 1. Работа через приложение (ярлык)</h2>
+                    <h2> Способ 1. Работа через приложение (ярлык)</h2>
                     <div class="class-card">
-                        <h3>2.1 Windows</h3>
+                        <h3>Windows</h3>
                         <ol style="color: var(--text-secondary); line-height: 1.8;">
                             <li>Найдите папку, в которую вы распаковали скачанный архив программы.</li>
                             <li>Запустите исполняемый файл <code>LLMCodeExporter.CLI.exe</code> двойным кликом.</li>
@@ -50,7 +41,7 @@
                         </ol>
                     </div>
                     <div class="class-card">
-                        <h3>2.2 Linux</h3>
+                        <h3>Linux</h3>
                         <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
                             На Linux <strong>нельзя запустить программу двойным кликом</strong>, потому что это консольное приложение, которому нужен терминал для ввода/вывода. Запускайте её так:
                         </p>
@@ -69,7 +60,7 @@
 
                 <!-- 3. Способ 2: CLI -->
                 <div class="project-card">
-                    <h2>3. Способ 2. Запуск через консоль (CLI)</h2>
+                    <h2>Способ 2. Запуск через консоль (CLI)</h2>
                     <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
                         Если вам удобнее работать в терминале — например, для автоматизации, написания скриптов или интеграции в CI/CD — используйте интерфейс командной строки. В CLI-режиме вы можете гибко управлять поведением программы без интерактивного опроса, передавая все настройки через ключи.
                     </p>
@@ -83,7 +74,7 @@ LLMCodeExporter.exe "C:\Projects\MyApp" --mode=compact --backend-only</code></pr
 
                 <!-- ====== Способ 3: Импортёр ====== -->
                 <div class="project-card">
-                    <h2>4. Способ 3. Импортёр – распаковка снапшотов</h2>
+                    <h2>Способ 3. Импортёр – распаковка снапшотов</h2>
                     <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
                         Начиная с версии v0.5, в состав решения входит <strong>LLMCode_Importer</strong> – утилита для восстановления файлов из Markdown-экспорта (снапшота), созданного основным экспортёром. Вы можете запустить импортёр как отдельно, так и через основное приложение с ключом <code>--start-input</code>.
                     </p>
@@ -101,7 +92,7 @@ LLMCodeExporter.exe "C:\Projects\MyApp" --mode=compact --backend-only</code></pr
 
                 <!-- ====== Способ 4: Веб-конфигуратор ====== -->
                 <div class="project-card">
-                    <h2>5. Способ 4. Веб-конфигуратор (графический интерфейс)</h2>
+                    <h2>Способ 4. Веб-конфигуратор (графический интерфейс)</h2>
                     <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
                         Для тех, кто предпочитает визуальный интерфейс, в составе проекта есть <strong>веб-конфигуратор</strong> (<code>files-web-wiki</code>). Он позволяет:
                     </p>
@@ -118,23 +109,7 @@ LLMCodeExporter.exe "C:\Projects\MyApp" --mode=compact --backend-only</code></pr
                     </p>
                 </div>
 
-                <!-- 6. Параметры командной строки (нумерация смещена) -->
-                <div class="project-card">
-                    <h2>6. Параметры командной строки (ключи)</h2>
-                    <!-- ... (остальной код без изменений) ... -->
-                </div>
-
-                <!-- 7. Примеры использования -->
-                <div class="project-card">
-                    <h2>7. Примеры использования</h2>
-                    <!-- ... -->
-                </div>
-
-                <!-- 8. Основные свойства ExportSettings -->
-                <div class="project-card">
-                    <h2>8. Основные свойства ExportSettings</h2>
-                    <!-- ... -->
-                </div>
+            
 
             </div>
         </div>
